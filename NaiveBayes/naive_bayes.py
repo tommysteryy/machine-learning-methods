@@ -24,8 +24,6 @@ class NaiveBayes:
         counts = np.bincount(y)
         p_y = counts / n
 
-        """YOUR CODE HERE FOR Q3.3"""
-
         # Compute the conditional probabilities i.e.
         # p(x_ij=1 | y_i==c) as p_xy[j, c]
         # p(x_ij=0 | y_i==c) as 1 - p_xy[j, c]
@@ -40,15 +38,6 @@ class NaiveBayes:
             for ft in range(d):
                 feature_values_count = np.bincount(class_k_domain[:,ft], minlength=2)
                 p_xy[ft, cls] = feature_values_count[1]/num_examples_in_class_k
-
-                # print(f"Examining feature = {ft} in y = {cls}:\n")
-                # print(f"There are {feature_values_count[1]} total occurances of this feature in this column")
-                # print(f"There are  {feature_values_count[0]} examples without this feature")
-                # print(f"resulting in probability = {feature_values_count[1]/num_examples_in_class_k}")
-
-
-    
-
 
         self.p_y = p_y
         self.p_xy = p_xy
@@ -91,8 +80,6 @@ class NaiveBayesLaplace(NaiveBayes):
         counts = np.bincount(y)
         p_y = counts / n
 
-        """YOUR CODE HERE FOR Q3.3"""
-
         # Compute the conditional probabilities i.e.
         # p(x_ij=1 | y_i==c) as p_xy[j, c]
         # p(x_ij=0 | y_i==c) as 1 - p_xy[j, c]
@@ -106,8 +93,6 @@ class NaiveBayesLaplace(NaiveBayes):
             
             for ft in range(d):
                 feature_values_count = np.bincount(class_k_domain[:,ft], minlength=2)
-                # if ((feature_values_count[1] == 0) or (feature_values_count[0] == 0) ):
-                #     print(f"Feature {ft} for y = {cls} is all the same value")
                 p_xy[ft, cls] = (feature_values_count[1] + self.beta) / (num_examples_in_class_k + k*self.beta)
 
         self.p_y = p_y
