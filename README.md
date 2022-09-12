@@ -1,2 +1,7 @@
-# machine-learning-methods
-A display of all machine learning methods learnt in CPSC 340
+# Machine Learning Implementation & Applications
+A collection of from-scratch implementations of traditional ML models, built independently during UBC CPSC 340: Machine Learning and Data Mining.
+
+
+## Linear Regression
+![lin-reg-display](LinearReg/figs/display-lin-reg.jpg)
+
