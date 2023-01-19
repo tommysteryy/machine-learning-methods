@@ -1,0 +1,454 @@
+\documentclass{article}
+
+\usepackage{fullpage}
+\usepackage{amsmath,amssymb}
+\usepackage{dsfont}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage{parskip}
+
+\usepackage[colorlinks,linkcolor=red!80!black]{hyperref}
+\usepackage[noabbrev,capitalize]{cleveref}
+
+% Use one or the other of these for displaying code.
+% NOTE: If you get
+%  ! Package minted Error: You must invoke LaTeX with the -shell-escape flag.
+% and don't want to use minted, just comment out the next line
+\usepackage{minted} \BeforeBeginEnvironment{minted}{\begingroup\color{black}} \AfterEndEnvironment{minted}{\endgroup} \setminted{autogobble,breaklines,breakanywhere,linenos}
+
+\usepackage{listings}
+
+
+% Commands for questions and answers
+\definecolor{question}{rgb}{0,0,1}
+\newcommand{\ask}[1]{\textcolor{question}{#1}}
+\newenvironment{asking}{\begingroup\color{question}}{\endgroup}
+
+\crefname{section}{Question}{Questions}
+\newlist{qlist}{enumerate}{1}
+\setlist[qlist,1]{leftmargin=*, label=\textbf{(\alph*)}, ref={(\alph*)}}
+\crefname{qlisti}{part}{parts}
+
+\definecolor{answer}{rgb}{0,.5,0}
+\newcommand{\ans}[1]{\par\textcolor{answer}{Answer: #1}}
+\newenvironment{answer}{\par\begingroup\color{answer}Answer: }{\endgroup}
+
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+
+\definecolor{points}{rgb}{0.6,0.3,0}
+\newcommand{\pts}[1]{\textcolor{points}{[#1~points]}}
+
+\newcommand{\hint}[1]{\textcolor{black!60!white}{\emph{Hint: #1}}}
+\newcommand{\meta}[1]{\textcolor{black!60!white}{\emph{#1}}}
+
+\newcommand{\TODO}{\color{red}{TODO}}
+
+% misc shortcuts
+\newcommand{\fig}[2]{\includegraphics[width=#1\textwidth]{#2}}
+\newcommand{\centerfig}[2]{\begin{center}\includegraphics[width=#1\textwidth]{#2}\end{center}}
+
+% Math
+\def\R{\mathbb{R}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\newcommand{\bigO}{\mathcal{O}}
+\newcommand{\bX}{\mathbf{X}}
+\newcommand{\tp}{^\mathsf{T}}
+
+%%begin novalidate  % overleaf code check gives false positives here
+\makeatletter
+% \abs{} uses auto-sized bars; \abs*{} uses normal-sized ones
+\newcommand{\abs}{\@ifstar{\@Abs}{\@abs}}
+\newcommand{\@abs}[1]{\left\lvert #1 \right\rvert}
+\newcommand{\@Abs}[1]{\lvert #1 \rvert}
+
+\newcommand{\norm}{\@ifstar{\@Norm}{\@norm}}
+\newcommand{\@norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand{\@Norm}[1]{\lVert #1 \rVert}
+
+\newcommand{\ceil}{\@ifstar{\@Ceil}{\@ceil}}
+\newcommand{\@ceil}[1]{\left\lceil #1 \right\rceil}
+\newcommand{\@Ceil}[1]{\lceil #1 \rceil}
+
+\newcommand{\floor}{\@ifstar{\@Floor}{\@floor}}
+\newcommand{\@floor}[1]{\left\lfloor #1 \right\rfloor}
+\newcommand{\@Floor}[1]{\lfloor #1 \rfloor}
+
+\newcommand{\inner}{\@ifstar{\@Inner}{\@inner}}
+\newcommand{\@inner}[2]{\left\langle #1, #2 \right\rangle}
+\newcommand{\@Inner}[2]{\langle #1, #2 \rangle}
+\makeatother
+%%end novalidate  % overleaf code check false-positives here
+
+
+\begin{document}
+
+\begin{center}
+\Large
+CPSC 440/540 Machine Learning (Jan-Apr 2023)\\
+Assignment 1 --
+due Friday January 20th at \textbf{noon}
+\end{center}
+
+
+
+\textbf{IMPORTANT!!!!! Please carefully read the submission instructions that will be posted on Piazza. We will deduct up to 50\% on assignments that do not follow the instructions.}
+
+Most of the questions below are related to topics covered in CPSC 340, or other courses listed on the prerequisite form. There are several notes available on the webpage which can help with some relevant background.
+
+If you find this assignment to be overly difficult, that is an early warning sign that you may not be prepared to take CPSC 440
+at this time. Future assignments may be longer and more difficult than this one.
+
+We use \ask{blue} to highlight the deliverables that you must answer/do/submit with the assignment.
+
+Cite any sources outside of course materials that you refer to.
+Even if you've written code for some of these questions before (e.g.\ in 340),
+\textbf{do it again}.
+
+
+
+\clearpage
+\section{Very-Short Answer Questions \pts{24}}
+
+Give a short and concise 1-2 sentence answer to the below questions.
+All acronyms, symbols, and methods are as used in CPSC 340, and should be fairly standard.
+Each part is worth \pts{1.5}.
+
+\begin{qlist}
+
+\item  Suppose we want to solve the binary classification problem of determining whether 26 by 26 images were images of digits or images of letters. \ask{What is an easy way to make our classifier roughly invariant to small translations of the training images?}
+\begin{answer}\TODO\end{answer}
+
+\item Ensemble methods are models that combine the predictions of multiple individual models. \ask{Give a reason why an ensemble method could do better than the best individual model in the ensemble.}
+\begin{answer}\TODO\end{answer}
+
+\item Suppose we are given two vectors of integers, x=$(x_1,x_2,\dots,x_n)$ and y=$(y_1,y_2,\dots,y_n)$, and we want to find the longest sequence of numbers that appears consecutively in both $x$ and $y$. \ask{Describe an $\bigO(n^2)$ algorithm to do this using dynamic programming}, assuming comparing integers takes constant time.
+\begin{answer}\TODO\end{answer}
+
+\item A common method for outlier detection is to collect a large number of outliers, and build a binary classifier that distinguishes these outliers from standard ``inlier'' datapoints. \ask{What is an advantage and a drawback of this approach to outlier detection, compared to unsupervised outlier detection methods?}
+\begin{answer}\TODO\end{answer}
+
+\item \ask{Why might we add a column of $1$ values to $X$ when fitting a linear model with predictions of the form $w\tp x$?}
+\begin{answer}\TODO\end{answer}
+
+\item \ask{If a function is convex, what does that imply about stationary points of the function? Does convexity imply that a stationary point exists?}
+\begin{answer}\TODO\end{answer}
+
+\item Consider fitting a neural network with one hidden layer. Would we call this a parametric or a non-parametric model \ask{if the hidden layer had $n$ units} (where $n$ is the number of training examples)? \ask{What about one with $d^2$ units} (where $d$ is the number of input features)?
+\begin{answer}\TODO\end{answer}
+
+\item Suppose you are hired by company to look at a dataset, and they want to ``find which features are relevant'' for their prediction task. \ask{What are two warnings you might give them regarding the features found by feature selection methods?}
+\begin{answer}\TODO\end{answer}
+
+\item Given a vector of $n$ positive integers $(x_1,x_2,\dots,x_n)$, \ask{give an $O(n)$ time algorithm for computing, for each position $i$, the sum of all numbers except $x_i$}. Next, \ask{describe how you could solve this problem in $O(n)$ even if you were not allowed to use subtraction or negation}, just addition. \hint{you can start at the beginning or the end of the list.}
+\begin{answer}\TODO\end{answer}
+
+\item If we fit a linear regression model with L1-regularization of the parameters, \ask{what is the effect of the regularization parameter $\lambda$ on the sparsity level of the solution? What is the effect of $\lambda$ on the two parts of the ``fundamental trade-off''} (the training error, and the amount of overfitting, aka the generalization gap)?
+\begin{answer}\TODO\end{answer}
+
+\item Suppose we fit a one-feature linear regression model with a polynomial basis, and this leads to non-zero regression weights. \ask{What would the prediction of this model be on a test point with value $x$ going to $\infty$? How would this change if you used Gaussian RBFs as features?}
+\begin{answer}\TODO\end{answer}
+
+\item Suppose that a famous machine learning TikTok influencer is advertising their  ``extremely-deep convolutional fuzzy-genetic Hilbert-long-short adversarial-recurrent neural network'' classifier, which has 5,000 hyper-parameters. They claim that if you take 10 different famous datasets, and tune the 5,000 hyper-parameters based on each dataset's validation set, that you can beat the current best-known validation set error on all 10 datasets. \ask{Explain whether or not this amazing claim is likely to be meaningful.}
+\begin{answer}\TODO\end{answer}
+
+\item When searching for a good $w$ for a linear classifier, \ask{why might we use the logistic loss instead of just minimizing the number of classification errors?}
+\begin{answer}\TODO\end{answer}
+
+\item \ask{What is the computational cost}, in $\bigO()$ notation, for fitting a linear regression model with $n$ examples and 1 feature using least squares (the normal equations)? \ask{Explain under what conditions} it would make sense to use gradient descent, instead of the normal equations for fitting a linear regression model with 1 feature.
+\begin{answer}\TODO\end{answer}
+
+
+\item With stochastic gradient descent, the loss might go up or down each time the parameters are updated. However, we don't actually know which of these cases occurred. \ask{Explain why it doesn't make sense to check whether the loss went up/down after each update.}
+\begin{answer}\TODO\end{answer}
+
+\item Consider using a fully-connected neural network for 3-class classification on a problem with $d=10$. If the network has two hidden layers, of size $k_1=100$ and $k_2 = 50$, \ask{how many parameters (including biases) does the network have?}
+\begin{answer}\TODO\end{answer}
+\end{qlist}
+
+
+\clearpage
+\section{Machine Learning Model Memory and Time Complexities \pts{18}}
+
+
+Answer the following questions using big-O notation, and a brief explanation.
+Your answers may involve $n$, $d$, and perhaps additional quantities defined in the question. 
+As an example, the (linear) least squares model has $\bigO(d)$ parameters, requires $\bigO(d)$ time for prediction, and requires $\bigO(nd^2 + d^3)$ time to train.\footnote{In this course, we assume matrix operations have the ``textbook'' cost where the operations are implemented in a straightforward way with ``for'' loops. For example, we'll assume that multiplying two $n \times n$ matrices or computing a matrix inverse simply costs $\bigO(n^3)$, rather than the $\bigO(n^\omega)$ where $\omega$ is closer to $2.37$ as discussed in CS algorithm courses; this is closer to the behaviour observed for actual practical matrix sizes.}
+
+Each part is worth \pts{2}.
+
+\begin{qlist}\color{question}
+\item What is the storage space required for the $k$-means clustering algorithm?
+\begin{answer}\TODO\end{answer}
+
+\item What is the cost of clustering $t$ examples using an already-trained k-means model?
+\begin{answer}\TODO\end{answer}
+
+
+\item What is the training time for least squares (linear regression by solving the normal equations) with L2 regularization?
+\begin{answer}\TODO\end{answer}
+
+\item What is the prediction cost for a trained linear model on $t$ test examples?
+\begin{answer}\TODO\end{answer}
+
+\item What is the storage space required to make predictions with a linear regression model using Gaussian RBFs as features?
+\begin{answer}\TODO\end{answer}
+
+\item What is the prediction time for linear regression with Gaussian RBFs as features on $t$ test examples? You can use $\sigma^2$ as the variance of the Gaussian RBFs.
+\begin{answer}\TODO\end{answer}
+
+\item What is the cost of evaluating the support vector regression objective function \red{shown in \cref{q:mat} \cref{q:mat:svr}}?
+\begin{answer}\TODO\end{answer}
+
+\item What is the cost of trying to minimize the exponential loss \red{shown in \cref{q:mat} \cref{q:mat:exp}} by running $t$ iterations of gradient descent?
+\begin{answer}\TODO\end{answer}
+
+\item What is the cost of trying to minimize the exponential loss  by running $t$ iterations of stochastic gradient descent?
+\begin{answer}\TODO\end{answer}
+\end{qlist}
+\meta{Many people got very low grades on this question in past years. If you're not sure how to answer questions like this, get help!}
+
+
+\clearpage
+
+\section{Matrix Notation, Quadratics, Convexity, and Gradients \pts{18}} \label{q:mat}
+\meta{This and the next question review some mathematical tools used in CPSC 340. You might find some of the notes on the course webpage useful as refreshers.}
+Each part is worth \pts{2}.
+
+\begin{qlist}
+\item Consider the function
+\[
+f(x) = \sum_{i=1}^n\sum_{j=1}^n a_{ij}x_ix_j + \sum_{i=1}^n b_ix_i + c,
+\]
+where $x$ is a vector of length $n$ with elements $x_i$, $b$ is a vector of length $n$ with elements $b_i$, and $A$ is an $n \times n$ matrix with elements $a_{ij}$ (not necessarily symmetric). \ask{Write this function in matrix notation} so that it uses $A$ and $b$, and does not have summations or references to indices $i$.
+
+\begin{answer}\TODO\end{answer}
+
+\item \ask{Write the gradient of $f$ from the previous question, in matrix notation}.
+\begin{answer}\TODO\end{answer}
+
+\item \label{q:mat:quad-conv} \ask{Show that $f$ is convex} if $A$ is a symmetric, positive semi-definite matrix.
+
+\begin{answer}\TODO\end{answer}
+
+\item In that case, \ask{give a linear system whose solution minimizes $f$ in terms of $x$}.
+
+\begin{answer}\TODO\end{answer}
+
+\item Consider weighted linear regression with an L2-regularizer with regularization strength $1/\sigma^2$,
+\[
+f(w) = \frac12 \sum_{i=1}^n v^i(y^i - w^Tx^i)^2 + \frac{1}{2\sigma^2}\sum_{j=1}^d w_j^2,
+\]
+where $\sigma > 0$ and we have a vector $v$ of length $n$ containing the elements $v^i$. The other symbols are our standard regression notation. \ask{Write this function in matrix notation}.
+
+Note: you can use $\bX$ as the matrix containing $x^i$ as the rows, $y$ as the vector containing the elements $y^i$, and $V$ as a diagonal matrix containing the vector $v$ along the diagonal.
+
+\begin{answer}\TODO\end{answer}
+
+\item Assuming that $v^i \geq 0$ for all $i$, \ask{show that $f$ from the previous part is convex}. \meta{(You can use \cref{q:mat:quad-conv} or not, as you prefer.)}
+
+\begin{answer}\TODO\end{answer}
+
+\item Assuming that we have $v^i \geq 0$ for all $i$, \ask{give a linear system whose solution gives a minimum value of $f$ in terms of $w$}.
+\meta{(Again, use the previous result or not, your choice.)}
+
+\begin{answer}\TODO\end{answer}
+
+
+\item \label{q:mat:exp} If we fit a linear classifier with the exponential loss (used in older boosting algorithms), it would take the form
+\[
+f(w) = \sum_{i=1}^n \exp(-y^iw^Tx^i).
+\]
+\ask{Derive the gradient of this loss function.}
+\begin{answer}\TODO\end{answer}
+
+
+\item \label{q:mat:svr} The support vector regression objective function is
+\[
+f(w) = \sum_{i=1}^n \max\{0, |w^Tx^i - y^i|-\epsilon\} + \frac \lambda 2 \norm{w}^2.
+\]
+where $\epsilon$ is a non-negative hyper-parameter. It is similar to the L1 robust regression loss, but where there is no penalty for being within $\epsilon$ of the prediction (which can reduce overfitting). \ask{Show that this non-differentiable function is convex}.
+
+\begin{answer}\TODO\end{answer}
+
+\end{qlist}
+
+
+\clearpage
+\section{MAP Estimation \pts{9}}
+
+
+In 340, we showed that under the assumptions of a Gaussian likelihood and Gaussian prior,
+\[
+y^i \sim \mathcal{N}(w^\top x^i,1), \quad w_j \sim \mathcal{N}\left(0,\frac{1}{\lambda}\right),
+\]
+that the MAP estimate is equivalent to solving the L2-regularized least squares problem
+\[
+f(w) = \frac{1}{2}\sum_{i=1}^n (w^\top x^i - y^i)^2 + \frac \lambda 2 \sum_{j=1}^d w_j^2,
+\]
+in the ``loss plus regularizer'' framework.
+For each of the alternate assumptions below, \ask{write it in the ``loss plus regularizer'' framework (simplifying as much as possible)}:
+
+\begin{qlist}
+\item \pts{3} Gaussian likelihood with a separate variance $\sigma_i^2$ for each training example, and Laplace prior with a separate variance $1/\lambda_j$ for each variable,
+\[ y^i \sim \mathcal{N}(w^Tx^i,\sigma_i^2), \quad w_j \sim \mathcal{L}\left(0,\frac{1}{\lambda_j}\right). \]
+
+\begin{answer}\TODO\end{answer}
+
+\item \pts{3} Robust student-$t$ likelihood and Gaussian prior centered at $u$.
+\[
+p(y^i | x^i, w) = \frac{1}{\sqrt{\nu}B\left(\frac 1 2,\frac \nu 2\right)}\left(1 + \frac{(w^Tx^i - y^i)^2}{\nu}\right)^{-\frac{\nu + 1}{2}}, \quad w_j \sim \mathcal{N}\left(u_j,\frac{1}{\lambda}\right),
+\]
+where $u$ is $d \times 1$, $B$ is the ``Beta" function, and the parameter $\nu$ is called the ``degrees of freedom.''\footnote{This likelihood is more robust than the Laplace likelihood, but leads to a non-convex objective.}
+
+\begin{answer}\TODO\end{answer}
+
+\item \pts{3} We use a Poisson-distributed likelihood (for the case where $y_i$ represents counts), and we use a uniform prior for some constant $\kappa$,
+\[
+p(y^i | x^i, w) = \frac{\exp(y^iw^\top x^i)\exp(-\exp(w^\top x^i))}{y^i!}, \quad p(w_j) \propto \kappa.
+\]
+\meta{This prior is ``improper,'' since $w\in\R^d$ but it doesn't integrate to 1 over this domain.}
+\begin{answer}\TODO\end{answer}
+
+\end{qlist}
+
+
+
+\clearpage
+\section{K-Means Clustering \pts{11}}
+
+\meta{This and following questions use code available from the course webpage; get it from \texttt{a1.zip}.}
+
+\meta{You'll need Python 3 and the packages \texttt{numpy}, \texttt{scipy}, and \texttt{matplotlib}.
+If you don't have them installed already,
+install them with \texttt{conda install}, your system package manager, or
+\texttt{pip install numpy scipy matplotlib}.}
+ 
+
+If you run \texttt{main.py 5}, it will load a dataset with two features and a very obvious clustering structure. It will then apply the $k$-means algorithm with a random initialization. The result of applying the algorithm will thus depend on the randomization, but a typical run might look like this:\\
+\centerfig{.5}{figs/kmeans-bad.png}
+(Note that the colours are arbitrary due to the label switching problem.)
+But the ``correct'' clustering (that was used to make the data) is something more like this:\\
+\centerfig{.5}{figs/kmeans-good.png}
+
+If you run the demo several times, it will find different clusterings. To select among clusterings for a \emph{fixed} value of $k$, one strategy is to minimize the sum of squared distances between examples $x_i$ and their means $w_{y_i}$,
+\[
+f(w_1,w_2,\dots,w_k,y^1,y^2,\dots,y^n) = \sum_{i=1}^n \norm{x^i - w_{y^i}}_2^2 = \sum_{i=1}^n \sum_{j=1}^d (x^i_j -  w_{y^i_j})^2.
+\]
+where $y_i \in \argmin_{c \in [n]} \norm{x_i - w_c}$ is the index of the closest mean to $x_i$. This is a natural criterion because the steps of k-means alternately optimize this objective function in terms of the $w_c$ and the $y_i$ values.
+ 
+\begin{qlist}
+ \item \pts{2} Complete the function \texttt{KMeans.loss}, inside \texttt{k\_means.py}, that takes in a dataset $\bX$, a set of cluster assignments $y$, and a set of cluster means $W$, and computes this objective function. \ask{Hand in your code.}
+\begin{answer}\TODO\end{answer}
+
+
+ \item \pts{1} Modify your code to, instead of/in addition to printing the number of labels that change on each iteration, print the value of \texttt{KMeans.loss} after each iteration. \ask{What trend do you observe?} (No need to hand in code or specific loss values for this, just describe the trend.)
+\begin{answer}\TODO\end{answer}
+
+ \item \pts{2} \texttt{main.py 5c} will call the function \verb|q_5c()| in \texttt{main.py}, which calls the \verb|best_fit| function to rerun $k$-means 50 times and take the one with the lowest error. Complete the \verb|best_fit| function, and \ask{hand in the resulting plot}.
+\begin{answer}\TODO\end{answer}
+
+ \item \pts{2} \ask{Explain why} \texttt{KMeans.loss} function should not be used to choose $k$ -- even if you evaluate it on test data.
+\begin{answer}\TODO\end{answer}
+
+
+ \item \pts{1} The data in \texttt{clusterData2.pkl} is exactly the same as \texttt{clusterData.pkl}, except that it has four outliers that are far away from the data. \texttt{main.py 5f} will run your code from above to find the best of 50 runs on this data and save it as \texttt{figs/kmeans-outliers.png}. \ask{Hand in this plot; are you satisfied with it?}
+ \begin{answer}\TODO\end{answer}
+
+ \item \pts{3} Implement the $k$-\emph{medians} algorithm in \texttt{kmedians.py}, which assigns examples to the nearest $w_c$ in the L1-norm and then updates the $w_c$ by setting them to the ``median" of the points assigned to the cluster (defining the $d$-dimensional median as the concatenation of the medians along each dimension). For this algorithm it makes sense to use the L1-norm version of the error (where $y^i$ now represents the closest median in the L1-norm),
+\[
+f(w_1,w_2,\dots,w_k,y^1,y^2,\dots,y^n) = \sum_{i=1}^n \norm{x_i - w_{y^i}}_1 = \sum_{i=1}^n \sum_{j=1}^d |x^i_j - w_{y^i,j}|,
+\] 
+ \texttt{main.py 5g} runs it for you, once you've finished the \texttt{KMedians} class.
+ \ask{Hand in your code and plot} obtained by taking the clustering with the lowest L1-norm after using  50 random initializations for $k = 4$. \ask{Is this better?}
+ \begin{answer}\TODO\end{answer}
+\end{qlist}
+
+
+\clearpage
+\section{Regularization and Hyper-Parameter Tuning \pts{10}}
+
+If you run \verb|main.py 6|, it will:
+\begin{enumerate}
+\item Load a one-dimensional regression dataset.
+\item Fit a least-squares linear regression model.
+\item Draw a figure showing the training/testing data and what the model looks like.
+\end{enumerate}
+Unfortunately, this is not a great model of the data, and the figure shows that a linear model with a $y$ intercept of 0 is probably not suitable.
+
+\begin{qlist}
+\item \pts{2} Implement the \verb|LeastSquaresBias| class to include a \emph{y-intercept} variable $w_0$, and makes predictions using the model
+\[
+y^i = w^T x^i + w_0.
+\]
+\ask{Hand in your new class and the updated plot.}
+\begin{answer}\TODO\end{answer}
+
+\item \pts{3} Allowing a non-zero y-intercept improves the prediction substantially, but the model still seems sub-optimal because there are obvious non-linear effects. Complete the model \verb|leastSquaresRBFL2| that implements \emph{least squares using Gaussian radial basis functions (RBFs) with L2-regularization}.
+
+Use \texttt{lam} for the L2 regularization parameter, and \texttt{sigma} for the lengthscale of the Gaussian features. Note that your L2 regularization should correspond to minimizing the loss function $\norm{\bX w - y}^2 + \lambda \norm{w}^2$; some versions instead correspond to putting a $\frac1n$ in front of the loss term.
+
+\ask{Hand in your function and the plot generated with $\lambda = 1$ and $\sigma = 1$.}
+
+\hint{The function \texttt{utils.euclidean\_dist\_squared}, which was also used in our k-means implementation, efficiently computes the squared Euclidean distance between all pairs of rows in two matrices.}
+
+\begin{answer}\TODO\end{answer}
+
+\item \pts{3} Modify the script, in the function \verb|q_6c|, to split the training data into a ``train'' and ``validation'' set (you can use half the examples for training and half for validation), and use these to select $\lambda$ and $\sigma$ from some reasonable set of candidate values. You'll probably want to vary these by a few orders of magnitude either smaller or larger from $1$.
+
+(Although in real work you'd probably use some pre-coded helpers for this, code it yourself here.)
+
+\ask{Hand in your modified function, the selected $\lambda$ and $\sigma$, and the plot you obtain by refitting on the full dataset with the best values of $\lambda$ and $\sigma$.}
+
+\begin{answer}\TODO\end{answer}
+
+
+\item \pts{2} Consider a model combining the first two parts of this question,
+\[
+y^i = w^Tx^i + w_0 + v^Tz^i,
+\]
+where $z^i$ is the Gaussian RBFs and $v$ is a vector of regression weights for those features. Suppose that we first fit $w$ and $w_0$ assuming that $v=0$ as in part (a), and then we fit $v$ with $w$ and $w_0$ fixed (you could use your code for (c) to do this by modifying the $y^i$ values). \ask{Why would someone want to do this?}
+
+\hint{Think about how this model would behave with $x^i = 10$.}
+
+\begin{answer}\TODO\end{answer}
+\end{qlist}
+
+
+\clearpage
+\section{Multi-Class Logistic Regression \pts{10}}
+
+
+Running \verb|main.py 7| loads a multi-class classification dataset and fits a ``one-vs-all'' logistic regression classifier using gradient descent as implemented in \texttt{optimize.py}, then reports the validation error and shows a plot of the data/classifier. The performance on the validation set is okay, but could be much better. For example, this classifier never  predicts some of the classes.
+
+Using a one-vs-all classifier hurts performance because the classifiers are fit independently, so there is no attempt to calibrate the columns of the matrix $W$. An alternative to this independent model is to use the softmax probability,
+\[
+p(y^i \mid W, x^i) = \frac{\exp(w_{y^i}^\top x^i)}{\sum_{c=1}^k\exp(w_c^\top x^i)}.
+\]
+Here $c$ is a possible label and $w_{c}$ is column $c$ of $W$. Similarly, $y^i$ is the training label, $w_{y^i}$ is column $y^i$ of $W$. The loss function corresponding to the negative logarithm of the softmax probability is given by
+\[
+f(W) = \sum_{i=1}^n \left[-w_{y^i}^\top x^i + \log\left(\sum_{c' = 1}^k \exp(w_{c'}^\top x^i)\right)\right].
+\]
+Moreover, I'll be nice and remind you that the gradient of this function is given by
+\[
+    \frac{\partial f(W)}{\partial W_{jc}}
+    = \sum_{i=1}^n \left[ -x^i_j \mathds{1}(y^i = c) + \red{x^i_j} p(y^i = c \mid W, x^i) \right]
+.\]
+(Make sure you can see how to derive this!)
+
+Implement the model in \verb|softmax_classifier.py|, which fits $W$ using the softmax loss from the previous section instead of fitting $k$ independent classifiers. \ask{Hand in your code, a plot produced by \texttt{plot2Dclassifier}, and report the validation error}.
+
+\hint{Remember to add a bias variable somewhere, or else code it in explicitly.}
+
+\hint{You can pass \texttt{check\_grad=True} to \texttt{find\_min}
+to help you debug the gradient of the softmax loss.
+Also, note that the \texttt{find\_min} function treats the parameters as a vector;
+you may want to use \texttt{reshape} when writing the softmax objective.}
+
+\begin{answer}\TODO\end{answer}
+
+
+\end{document}
