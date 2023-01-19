@@ -46,6 +46,10 @@ def best_fit(X, k, reps=50, cls=KMeans):
     raise NotImplementedError()
 
 
+@handle("5a")
+def q_5a():
+    (X,) = load_dataset("clusterData", "X")
+    model = KMeans(X, 4, plot=False)
 
 @handle("5c")
 def q_5c():

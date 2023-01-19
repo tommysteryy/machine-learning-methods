@@ -43,6 +43,7 @@ class KMeans:
 
             if log:
                 print(f"Changes: {changes:>7,}")
+                print(f"Logging the loss: {self.loss(X, y)}")
 
         if plot and self.d == 2:
             plot2Dclusters(
@@ -54,5 +55,21 @@ class KMeans:
         if y is None:
             y = self.get_assignments(X)
 
-        raise NotImplementedError()
+        n, self.d = X.shape
+        k, d = w.shape
+        
+        sum_of_squared_distances = 0
+
+        for cluster in range(k):
+            cluster_mean = w[cluster,]
+    
+            for example in range(n):
+                if y[example] == cluster:
+                    sum_of_squared_distances += np.linalg.norm(X[example,] - cluster_mean)
+        
+        return sum_of_squared_distances
+
+        
+
+
 
