@@ -65,7 +65,7 @@ class KMeans:
     
             for example in range(n):
                 if y[example] == cluster:
-                    sum_of_squared_distances += np.linalg.norm(X[example,] - cluster_mean)
+                    sum_of_squared_distances += np.linalg.norm(X[example,] - cluster_mean) ** 2
         
         return sum_of_squared_distances
 
