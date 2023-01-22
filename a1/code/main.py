@@ -16,7 +16,7 @@ os.chdir(Path(__file__).parent.resolve())
 
 # question code
 from kmeans import KMeans
-from kmedians import KMedians
+from kmedians import KMedians, l1_distances
 from utils import (
     test_and_plot,
     plot2Dclassifier,
@@ -42,8 +42,20 @@ def best_fit(X, k, reps=50, cls=KMeans):
     # Use  cls(X, k, plot=False, log=False)  to fit a model,
     # so it'll work for both KMeans and KMedians.
     # (Passing plot=False makes it run a *lot* faster, and log=False avoids a ton of clutter.)
-
-    raise NotImplementedError()
+    bestModel = "NOT IMPLEMENTED"
+    bestModelLoss = 0
+    for rep in range(reps):
+        currModel = cls(X, k, plot=False, log=False)
+        currModelLoss = currModel.loss(X)
+        if bestModel == "NOT IMPLEMENTED":
+            bestModel = currModel
+            bestModelLoss = currModelLoss
+        else:
+            if (currModelLoss < bestModelLoss):
+                bestModel = currModel
+                bestModelLoss = currModelLoss
+    
+    return bestModel
 
 
 @handle("5a")
@@ -70,6 +82,12 @@ def q_5g():
     (X,) = load_dataset("clusterData2", "X")
     best_model = best_fit(X, k=4, cls=KMedians)
     plot2Dclusters(X, best_model.get_assignments(X), best_model.w, "kmedians-outliers.png")
+    # A = np.array([[1, 2], [3, 4]])
+    # B = np.array([[-1, 1], [0, 3]])
+
+
+    # print(f"B looks like:\n {B}\n")
+    # print(f"Their pairwise L1 distances is: \n{l1_distances(A, B)}")
 
 
 @handle("6")
@@ -96,8 +114,37 @@ def q_6b():
 @handle("6c")
 def q_6c():
     X, y = load_dataset("basisData", "X", "y")
+    ## tips from https://towardsdatascience.com/how-to-split-a-dataset-into-training-and-testing-sets-b146b1649830
+    n, d = X.shape
+    split_separator = np.random.rand(n) <= 0.5
+    train_X, train_y = X[split_separator], y[split_separator]
+    validation_X, validation_y = X[~split_separator], y[~split_separator]
 
-    raise NotImplementedError()
+    lams = np.exp(np.linspace(-4, 4, num=15))
+    sigmas = np.linspace(0, 8, num = 16)
+
+    print(f"Searchspace for lambda is \n {lams}\n")
+    print(f"Searchspace for sigma is \n {sigmas}\n")
+
+    bestModel = "NOT IMPLEMENTED"
+    bestError = 0
+    for lam in lams:
+        for sigma in sigmas:
+            currModel = LeastSquaresRBFL2(train_X, train_y, lam=lam, sigma=sigma)
+            validation_yhats = currModel.predict(validation_X)
+            error_rate = np.mean((validation_yhats - validation_y) ** 2)
+            if (bestModel == "NOT IMPLEMENTED"):
+                bestError = error_rate
+                bestModel = currModel
+            else:
+                if (error_rate < bestError):
+                    bestModel = currModel
+                    bestError = error_rate
+
+    print(f"Out of the search, the best model had validation error of {bestError}")
+    print(f"with lambda = {bestModel.lam} and sigma = {bestModel.sigma}")
+
+    test_and_plot(bestModel, X, y, filename="leastsquares-rbfl2-selected.png")
 
 
 
