@@ -25,17 +25,27 @@ class LeastSquaresBias:
 
 
     def fit(self, X, y):
-        raise NotImplementedError()
+        ## used some tips from 
+        ## https://stackoverflow.com/questions/8486294/how-do-i-add-an-extra-column-to-a-numpy-array
+        n, d = X.shape
+        col_of_ones = np.ones((n, 1))
+        X_bias = np.append(col_of_ones, X, axis = 1)
+        self.w = np.linalg.solve(X_bias.T @ X_bias, X_bias.T @ y)
 
 
     def predict(self, X):
-        raise NotImplementedError()
+        if self.w is None:
+            raise RuntimeError("You must fit the model first!")
+        n, d = X.shape
+        X_bias = np.append(np.ones((n, 1)), X, axis = 1)
+        return X_bias @ self.w
 
 
 
 def gaussianRBF_feats(X, bases, sigma):
     # Not mandatory, but might be nicer to implement this separately.
-    raise NotImplementedError()
+    D2 = euclidean_dist_squared(X, bases)
+    return np.exp(-1 * (D2 / 2*sigma*2))
 
 
 
@@ -48,9 +58,12 @@ class LeastSquaresRBFL2:
 
 
     def fit(self, X, y):
-        raise NotImplementedError()
-
+        self.bases = X
+        Z = gaussianRBF_feats(X, self.bases, self.sigma)
+        n, d = Z.shape
+        self.w = np.linalg.solve(Z.T @ Z + self.lam*np.identity(n), Z.T @ y)
 
     def predict(self, X):
-        raise NotImplementedError()
+        Z = gaussianRBF_feats(X, self.bases, self.sigma)
+        return Z @ self.w
 
