@@ -23,11 +23,13 @@ class SoftmaxClassifier:
         y_unique_classes = np.unique(y)
         k = len(y_unique_classes)
 
-        W_initial_guess = np.zeros([d, k])
+        W_initial_guess = np.zeros((d+1, k))
         W_initial_guess = W_initial_guess.flatten()
 
-        W_optimal, f_optimal = find_min(self.loss_and_grad, W_initial_guess, X, y, check_grad=True)
-        W_optimal = W_optimal.reshape((d, k))
+        X_with_bias = np.append(np.ones((n, 1)), X, axis = 1)
+
+        W_optimal, f_optimal = find_min(self.loss_and_grad, W_initial_guess, X_with_bias, y, check_grad=True)
+        W_optimal = W_optimal.reshape((d+1, k))
 
         self.W = W_optimal
 
@@ -36,6 +38,10 @@ class SoftmaxClassifier:
         n, d = X.shape
         y_unique = np.unique(y)
         k = len(y_unique)
+
+        # print(f"X looks like \n {X}")
+
+        # X_with_bias = np.append(np.ones((n, 1)), X, axis = 1)
 
         W = w.reshape((d, k))
 
@@ -65,7 +71,7 @@ class SoftmaxClassifier:
             w_yi_T_x_i = np.log(M[i, y_i])
             inner_sum = np.sum(M[i,:])
             f_total += -1 * w_yi_T_x_i + np.log(inner_sum)
-
+        
         W_grad = X.T @ (P-Y)
  
         w_grad_flattened = W_grad.flatten()
@@ -74,5 +80,7 @@ class SoftmaxClassifier:
 
 
     def predict(self, X):
-        return np.argmax(X @ self.W, axis = 1)
+        n,*_ = X.shape
+        X_with_bias = np.append(np.ones((n, 1)), X, axis = 1)
+        return np.argmax(X_with_bias @ self.W, axis = 1)
 
