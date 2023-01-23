@@ -159,7 +159,14 @@ def q_7():
         ovr_lr, X, y, X_test=X_test, y_test=y_test, k=5, filename="lr-preds.png"
     )
 
-    raise NotImplementedError()
+    softmax = SoftmaxClassifier(X, y)
+    softmax_y_hat = softmax.predict(X_test)
+    print(f"Softmax test error: {np.mean(softmax_y_hat != y_test):.1%}")
+    plot2Dclassifier(
+        softmax, X, y, X_test=X_test, y_test=y_test, k=5, filename="lr-preds-softmax.png"
+    )
+
+    # raise NotImplementedError()
 
 
     plt.show()
