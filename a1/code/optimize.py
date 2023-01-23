@@ -63,6 +63,8 @@ def find_min(
             w_new = w - alpha * g
             f_new, g_new = fun_and_grad(w_new, *args)
 
+            print(f"Iteration {fun_evals}: f = {f_new}")
+
             fun_evals += 1
             if check_grad and fun_evals % check_grad == 0:
                 check_gradient(fun_and_grad, w_new, f_new, g_new, *args)
