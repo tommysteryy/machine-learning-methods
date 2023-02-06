@@ -66,10 +66,15 @@ class NaiveBayes:
 
         for i in range(n):
             x_i = X[i]
-            p_x_y1 = self.theta_y1 * np.inner(x_i, self.theta_x_1)
-            p_x_y0 = self.theta_y0 * np.inner(x_i, self.theta_x_0)
+            p_x_y1 = 1
+            p_x_y0 = 1
+            for j in range(d):
+                if x_i[j] == 1:
+                    p_x_y1 = p_x_y1 * self.theta_x_1[j]
+                else:
+                    p_x_y0 = p_x_y0 * self.theta_x_0[j]
 
-            preds[i] = p_x_y1 > p_x_y0
+            preds[i] = p_x_y1*self.theta_y1 > p_x_y0*self.theta_y0
 
         return preds
 
