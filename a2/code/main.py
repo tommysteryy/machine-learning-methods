@@ -30,8 +30,16 @@ from neural_net import NeuralNetRegressor, NeuralNetClassifier
 def bernoulli_sample(n_sample, theta, rng=None):
     if rng is None:
         rng = np.random.default_rng()
-    raise NotImplementedError()
+    sample = rng.random(n_sample)
+    return (sample < theta).astype(int)
+    
 
+@handle("1d")
+def q_1d():
+    t = 10
+    n = 5
+    for i in range(n):
+        print(bernoulli_sample(t, 0.4))
 
 
 @handle("1f")
@@ -47,8 +55,22 @@ def q_1f():
     ax.set_xlim(1, max_n)
     ax.set_ylim(-2, 1)
 
-    raise NotImplementedError()
+    def calc(sample):
+        ## assumes sample is an array of length 1
+        if sample[0] == 1:
+            return -5
+        else:
+            return 1
 
+    for run in range(n_repeats):
+        running_sum = 0
+        means = []
+        for i in range(max_n):
+            running_sum += calc(bernoulli_sample(1, theta))
+            means.append(running_sum / (i+1))
+        ax.plot(means)
+    
+    ax.axhline(y = -0.02)
 
     fn = "../figs/bernoulli_game.pdf"
     fig.savefig(fn, bbox_inches="tight", pad_inches=0.1)
@@ -80,6 +102,8 @@ def q_3c():
     print("NaiveBayes test set errors:")
     for lap, err in zip(laps, errs):
         print(f"  smooth {lap:>4.1f}:  {err:.1%}")
+    # X, y, Xtest, ytest = load_dataset("mnist35_binary", "X", "y", "Xtest", "ytest")
+    # NaiveBayes(0, X, y)
 
 
 
