@@ -138,7 +138,7 @@ def q3_vqnb():
 def q_4_2():
     X, y = load_dataset("basisData", "X", "y")
 
-    model = NeuralNetRegressor([5])
+    model = NeuralNetRegressor([75, 50, 25, 10, 20, 45, 50, 75])
     model.fit(X, y)
     yhat = model.predict(X)
     print("Training error: ", np.mean((yhat - y) ** 2))
@@ -151,7 +151,7 @@ def q_4_2():
 def q_4_3():
     X, y, Xtest, ytest = load_dataset("mnist35", "X", "y", "Xtest", "ytest")
 
-    model = NeuralNetClassifier([5])
+    model = NeuralNetClassifier([50, 25, 10, 20, 45], batch_size = 100, init_scale=0.5, learning_rate = 0.0005)
     model.fit(X, y)
     yhat = model.predict(Xtest)
     print(f"Test set error: {np.mean(yhat != ytest):.1%}")

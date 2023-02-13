@@ -21,6 +21,12 @@ def unflatten_weights(weights_flat, layer_sizes):
 
     return weights
 
+def relu(x):
+    return np.maximum(0, x)
+
+def sigmoid(x):
+    return 1/(1+np.exp(-x))
+
 
 class NeuralNetRegressor:
     def __init__(
@@ -46,7 +52,7 @@ class NeuralNetRegressor:
         activations = [X]
         for W in weights:
             Z = X @ W.T
-            X = np.tanh(Z)
+            X = sigmoid(Z) ## relu
             activations.append(X)
 
         yhat = Z
@@ -57,7 +63,7 @@ class NeuralNetRegressor:
         for i in range(len(self.layer_sizes) - 2, 0, -1):
             W = weights[i]
             grad = grad @ W
-            grad = grad * (1 - activations[i] ** 2)
+            grad = grad * (activations[i] * (1-activations[i]))
             grad_W = grad.T @ activations[i - 1]
             g = [grad_W] + g
 
@@ -80,7 +86,7 @@ class NeuralNetRegressor:
 
         weights_flat = flatten_weights(weights)
         for i in range(self.max_iter):
-            subset = np.random.choice((X.shape[0]), size=1, replace=False)
+            subset = np.random.choice((X.shape[0]), size=100, replace=False)
             loss, step_gradient = self.loss_and_grad(weights_flat, X[subset], y[subset])
             weights_flat = weights_flat - self.learning_rate * step_gradient
             self.weights = unflatten_weights(weights_flat, self.layer_sizes)
@@ -133,7 +139,7 @@ class NeuralNetRegressor:
     def predict(self, X):
         for W in self.weights:
             Z = X @ W.T
-            X = np.tanh(Z)
+            X = sigmoid(Z)
         return Z
 
 
@@ -169,7 +175,7 @@ class NeuralNetClassifier:
         activations = [X]
         for W in weights:
             Z = X @ W.T
-            X = np.tanh(Z)
+            X = sigmoid(Z)
             activations.append(X)
 
         yhat = Z
@@ -180,7 +186,7 @@ class NeuralNetClassifier:
         for i in range(len(self.layer_sizes) - 2, 0, -1):
             W = weights[i]
             grad = grad @ W
-            grad = grad * (1 - activations[i] ** 2)
+            grad = grad * (activations[i] * (1 - activations[i]))
             grad_W = grad.T @ activations[i - 1]
             g = [grad_W] + g
 
@@ -213,6 +219,6 @@ class NeuralNetClassifier:
     def predict(self, X):
         for W in self.weights:
             Z = X @ W.T
-            X = np.tanh(Z)
+            X = sigmoid(Z)
 
         return np.squeeze(self.uncenter(np.sign(Z)), 1)
