@@ -97,13 +97,14 @@ def q_3():
 
 @handle("3c")
 def q_3c():
-    laps = [1e-9, 0.5, 1, 2.5, 5, 10, 50]
-    errs = eval_models([NaiveBayes(laplace_smooth=lap) for lap in laps])
-    print("NaiveBayes test set errors:")
-    for lap, err in zip(laps, errs):
-        print(f"  smooth {lap:>4.1f}:  {err:.1%}")
-    # X, y, Xtest, ytest = load_dataset("mnist35_binary", "X", "y", "Xtest", "ytest")
-    # NaiveBayes(0, X, y)
+#     laps = [1e-9, 0.5, 1, 2.5, 5, 10, 50]
+#     errs = eval_models([NaiveBayes(laplace_smooth=lap) for lap in laps])
+#     print("NaiveBayes test set errors:")
+#     for lap, err in zip(laps, errs):
+#         print(f"  smooth {lap:>4.1f}:  {err:.1%}")
+#     # X, y, Xtest, ytest = load_dataset("mnist35_binary", "X", "y", "Xtest", "ytest")
+    err = eval_model(NaiveBayes())
+    print(f"Test set error: {err:.1%}")
 
 
 

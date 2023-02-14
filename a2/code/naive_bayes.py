@@ -40,44 +40,53 @@ class NaiveBayes:
 
         # print(f"X looks like {X}")
 
-        self.n0 = np.sum(y == 0)
-        self.n1 = np.sum(y == 1)
+        # self.n0 = np.sum(y == 0)
+        # self.n1 = np.sum(y == 1)
+        self.n1 = 0
+    
+        for i in range(n):
+            if y[i] == 1:
+                self.n1 += 1
 
-        # print(f"Calculated n1 and n0 to be {self.n1} and {self.n0}")
+        ## self.p_xy_k = vector of length d, where p_xy_k[d] = Pr(x_j = 1 | y = k)
+        self.p_xy_1 = np.zeros(d)
+        self.p_xy_0 = np.zeros(d)
 
-        ## p(y) or theta_y 
-        self.theta_y1 = self.n1 / n
-        self.theta_y0 = self.n0 / n 
-        # print(f"theta_y is {self.theta_y}")
+        for j in range(d):
+            for i in range(n):
+                x_i = X[i]
+                if (y[i] == 1) and (x_i[j] == 1):
+                    self.p_xy_1[j] += 1
+                if (y[i] == 0) and (x_i[j] == 1):
+                    self.p_xy_0[j] += 1
+        
+        self.p_xy_1 /= self.n1
+        self.p_xy_0 /= (n - self.n1)
 
-        ## theta_x_1 is a vector of d x 1, where theta_x_j is the P(x_j = 1 | y = 1)
-        X_ones = X[y == 1]
-        X_zeros = X[y == 0]
-
-        self.theta_x_1 = (np.sum(X_ones, axis = 0)+ self.laplace_smooth )/ (self.n1 + self.laplace_smooth*2)
-        self.theta_x_0 = (np.sum(X_zeros, axis = 0) + self.laplace_smooth) / (self.n0 + self.laplace_smooth*2)
-        # print(f"theta_x looks like {self.theta_x}")
+        self.p_y = self.n1 / n
 
 
     def predict(self, X):
         n, d = X.shape
 
-        preds = -1*np.ones(n)
+        preds = -1*np.ones(n) 
 
         for i in range(n):
             x_i = X[i]
-            p_x_y1 = 1
-            p_x_y0 = 1
+
+            prob_y_1 = self.p_y
+            prob_y_0 = 1 - self.p_y
+
             for j in range(d):
                 if x_i[j] == 1:
-                    p_x_y1 = p_x_y1 * self.theta_x_1[j]
-                else:
-                    p_x_y0 = p_x_y0 * self.theta_x_0[j]
-
-            preds[i] = p_x_y1*self.theta_y1 > p_x_y0*self.theta_y0
-
+                    prob_y_0 *= self.p_xy_0[j]
+                    prob_y_1 *= self.p_xy_1[j]
+            
+            preds[i] = prob_y_1 > prob_y_0
+        
         return preds
 
+        
 
 
 class VQNB:
