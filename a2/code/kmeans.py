@@ -26,7 +26,7 @@ class KMeans:
         n, self.d = X.shape
         assert n >= k
 
-        self.w = w = self.rng.choice(X, k, replace=False)
+        self.w = w = self.rng.choice(X, k, replace=False) * 1.0
 
         y = np.zeros(n, dtype=np.int32)
         changes = n
