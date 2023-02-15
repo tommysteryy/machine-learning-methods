@@ -124,12 +124,16 @@ def q3_vqnb():
         print(f"  k = {k}:  {err:.1%}")
 
     model = models[-1]
+    # model = VQNB(k = 5)
+    # eval_models(model)
     fig, axes = plt.subplots(
         2, 5, figsize=(20, 8), sharex=True, sharey=True, constrained_layout=True
     )
+    
     for y in range(2):
         for c in range(5):
-            ps = np.zeros(784)  # get the probabilities from your model
+            # ps = np.zeros(784)  # get the probabilities from your model
+            ps = model.p_xj_yz[:, y, c]
             axes[y][c].imshow(ps.reshape((28, 28)), "gray")
     fig.savefig("../figs/vqnb_probs.pdf", bbox_inches="tight", pad_inches=0.1)
     print("Plots in ../figs/vqnb_probs.pdf")
