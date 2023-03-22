@@ -1,0 +1,394 @@
+\documentclass{article}
+
+\usepackage{fullpage}
+\usepackage{amsmath,amssymb}
+\usepackage{dsfont}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage{parskip}
+
+\usepackage[colorlinks,linkcolor=red!80!black]{hyperref}
+\usepackage[noabbrev,capitalize]{cleveref}
+
+% Use one or the other of these for displaying code.
+% NOTE: If you get
+%  ! Package minted Error: You must invoke LaTeX with the -shell-escape flag.
+% and don't want to use minted, just comment out the next line
+\usepackage{minted} \BeforeBeginEnvironment{minted}{\begingroup\color{black}} \AfterEndEnvironment{minted}{\endgroup} \setminted{autogobble,breaklines,breakanywhere,linenos}
+
+\usepackage{listings}
+
+
+% Commands for questions and answers
+\definecolor{question}{rgb}{0,0,1}
+\newcommand{\ask}[1]{\textcolor{question}{#1}}
+\newenvironment{asking}{\begingroup\color{question}}{\endgroup}
+
+\crefname{section}{Question}{Questions}
+\newlist{qlist}{enumerate}{1}
+\setlist[qlist,1]{leftmargin=*, label=\textbf{(\thesection.\arabic*)}, ref={(\thesection.\arabic*)}}
+\crefname{qlisti}{part}{parts}
+
+\definecolor{answer}{rgb}{0,.5,0}
+\newcommand{\ans}[1]{\par\textcolor{answer}{Answer: #1}}
+\newenvironment{answer}{\par\begingroup\color{answer}Answer: }{\endgroup}
+
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+
+\definecolor{points}{rgb}{0.6,0.3,0}
+\newcommand{\pts}[1]{\textcolor{points}{[#1~points]}}
+\newcommand{\onept}[1]{\textcolor{points}{[1~point]}}
+
+\newcommand{\hint}[1]{\textcolor{black!60!white}{\emph{Hint: #1}}}
+\newcommand{\meta}[1]{\textcolor{black!60!white}{\emph{#1}}}
+
+\newcommand{\TODO}{\color{red}{TODO}}
+
+% misc shortcuts
+\newcommand{\fig}[2]{\includegraphics[width=#1\textwidth]{#2}}
+\newcommand{\centerfig}[2]{\begin{center}\includegraphics[width=#1\textwidth]{#2}\end{center}}
+
+% Math
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator{\E}{\mathbb{E}}
+\newcommand{\bigO}{\mathcal{O}}
+\newcommand{\bX}{\mathbf{X}}
+\DeclareMathOperator{\indic}{\mathds{1}}
+\newcommand\R{\mathbb{R}}
+\newcommand{\tp}{^\mathsf{T}}
+\newcommand{\ud}{\,\mathrm{d}}
+
+%%begin novalidate  % overleaf code check gives false positives here
+\makeatletter
+% \abs{} uses auto-sized bars; \abs*{} uses normal-sized ones
+\newcommand{\abs}{\@ifstar{\@Abs}{\@abs}}
+\newcommand{\@abs}[1]{\left\lvert #1 \right\rvert}
+\newcommand{\@Abs}[1]{\lvert #1 \rvert}
+
+\newcommand{\norm}{\@ifstar{\@Norm}{\@norm}}
+\newcommand{\@norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand{\@Norm}[1]{\lVert #1 \rVert}
+
+\newcommand{\ceil}{\@ifstar{\@Ceil}{\@ceil}}
+\newcommand{\@ceil}[1]{\left\lceil #1 \right\rceil}
+\newcommand{\@Ceil}[1]{\lceil #1 \rceil}
+
+\newcommand{\floor}{\@ifstar{\@Floor}{\@floor}}
+\newcommand{\@floor}[1]{\left\lfloor #1 \right\rfloor}
+\newcommand{\@Floor}[1]{\lfloor #1 \rfloor}
+
+\newcommand{\inner}{\@ifstar{\@Inner}{\@inner}}
+\newcommand{\@inner}[2]{\left\langle #1, #2 \right\rangle}
+\newcommand{\@Inner}[2]{\langle #1, #2 \rangle}
+\makeatother
+%%end novalidate  % overleaf code check false-positives here
+
+
+\begin{document}
+
+\begin{center}
+\Large
+CPSC 440/540 Machine Learning (Jan-Apr 2023)\\
+Assignment 3 --
+due Monday March 27th at \textbf{11:59pm}
+\end{center}
+
+
+The assignment instructions are the same as for the previous assignments. If you do the assignment with a partner, please only hand in one copy for the group (using the appropriate Gradescope feature).
+
+
+
+\section{Gamma-Poission Models \pts{20}}
+
+
+Consider counts $y \in \{0,1,2,3,\dots\}$ following a Poisson distribution with rate parameter $\lambda > 0$:
+\[
+y \sim \operatorname{Poisson}(\lambda)
+\qquad
+p(y \mid \lambda) = \frac{\lambda^y\exp(-\lambda)}{y!}.
+\]
+We'll assume that $\lambda$ follows a Gamma distribution (the conjugate prior to the Poisson) with shape parameter $\alpha > 0$ and rate parameter $\beta > 0$:
+\[
+\lambda \sim \operatorname{Gamma}(\alpha, \beta)
+\qquad
+p(\lambda \mid \alpha, \beta)
+  = \frac{\beta^\alpha}{\Gamma(\alpha)} \lambda^{\alpha-1}\exp(-\beta\lambda)
+  = \frac{1}{Z(\alpha, \beta)} \lambda^{\alpha-1}\exp(-\beta\lambda)
+,\]
+where $\Gamma$ is the gamma function.
+
+Compute the following quantities:
+
+\begin{qlist} \color{question}
+
+\item \pts{5} The posterior distribution, \[ p(\lambda \mid y,\alpha, \beta).  \]
+
+\begin{answer}\TODO\end{answer}
+
+\item \pts{5} The marginal likelihood of $y$ given the hyper-parameters $\alpha$ and $\beta$,
+\[ p(y\mid \alpha, \beta) = \int p(y,\lambda\mid \alpha, \beta) \ud\lambda.  \]
+
+\begin{answer}\TODO\end{answer}
+
+\item \pts{5} The posterior mean estimate for $\lambda$,
+\[ \mathbb{E}_{\lambda\mid y,\alpha,\beta}[\lambda] = \int \lambda \, p(\lambda \mid y,\alpha,\beta) \ud\lambda.  \]
+
+\begin{answer}\TODO\end{answer}
+
+
+\item \pts{5} The posterior predictive distribution for a new independent observation $\tilde{y}$ given $y$,
+\[ p(\tilde{y}\mid y,\alpha,\beta) =  \int p(\tilde{y},\lambda\mid y,\alpha,\beta)d\lambda.  \]
+
+
+\begin{answer}\TODO\end{answer}
+
+\end{qlist}
+
+
+\hint{You should be able to use the form of the gamma distribution to solve all the integrals that show up in this question. You can use $Z(\alpha, \beta) = \frac{\Gamma(\alpha)}{\beta^\alpha}$ to represent the normalizing constant of the gamma distribution,\footnote{%
+    Since continuous PDFs integrate to 1, we have 
+    $\int \frac{\beta^\alpha}{\Gamma(\alpha)} \lambda^{\alpha-1} \exp(-\beta\lambda) \ud\lambda = 1$. 
+    Thus we have $\int \lambda^{\alpha-1} \exp(-\beta\lambda) \ud\lambda = \frac{\Gamma(\alpha)}{\beta^\alpha}$.
+    If we write $p(\lambda \mid \alpha, \beta) \propto \lambda^{\alpha-1} \exp(-\beta\lambda))$,
+    then the normalizing constant is $Z(\alpha,\beta) = \frac{\Gamma(\alpha)}{\beta^\alpha}$.
+} and use $\alpha^+$ and $\beta^+$ as the updated parameters of the gamma distribution in the posterior.}
+
+
+\clearpage
+\section{Empirical Bayes for Bernoulli Models \pts{30}}
+
+If you run \texttt{main.py eb-base}, it will load a dataset representing the number of people diagnosed with stomach cancer in a set of different regions, and the number of people at risk in the region. The format of the data is as follows:
+\begin{itemize}
+  \item \texttt{n[j,0]} is number of positive examples in the training set for group $j$.
+  \item \texttt{n[j,1]} is the total number of examples in the training set for group $j$.
+  \item \texttt{n\_test[j,0]} is number of positive examples in the testing set for group $j$.
+  \item \texttt{n\_test[j,1]} is the total number of examples in the testing set for group $j$.
+\end{itemize}
+The code first shows the negative log-likelihood (NLL) on the test set if we assume that the probability of getting stomach cancer among each group is 0.5. The NLL under this choice is very high, since the number of positives is fairly low (remember that we want to have a low NLL, corresponding to a high likelihood). The code then computes the MLE for each group, and evaluates the NLL with this choice.
+
+\begin{qlist}
+\item \pts{2}
+    \ask{Why do we get \texttt{NaN} for the NLL with the MLE values?
+         What is the actual test likelihood supposed to be in this case?}
+
+\begin{answer}\TODO\end{answer}
+
+
+\item \pts{3}
+    Laplace smoothing corresponds to  MAP estimation with a beta prior that has $\alpha=2$ and $\beta=2$.
+    \ask{What is the test NLL if we use Laplace smoothing to estimate the parameters?} 
+
+\begin{answer}\TODO\end{answer}
+
+\item \pts{3}
+    Instead of using MAP estimation and then computing the NLL,
+    we could use the Bayesian approach of computing the negative logarithm of the posterior predictive probability of the test data.
+    \ask{%
+      What is the total negative-log-likelihood of one\red{-group}-at-a-time posterior predictive probabilities,
+      \red{$\sum_{j=1}^{n_\mathit{groups}} -\log p( \texttt{n\_test[j, 0]} \mid \bX, \alpha, \beta, \texttt{n\_test[j, 1]})$},
+      using a beta prior with $\alpha=2$ and $\beta=2$?
+      Explain why you think this is better/worse than the test NLL under MAP estimation.}
+
+\begin{answer}\TODO\end{answer}
+
+\item \pts{3}
+    Instead of modeling each group independently,
+    consider fitting a single Bernoulli model by pooling the data across all groups.
+    In other words, we ignore the groups and treat all the examples as if they came from a single source.
+    \ask{%
+      Report the test NLL in this pooled setting when using MLE, MAP, and the posterior predictive.
+      Why are these results more similar than when we use independent Bernoullis for each group?
+    }
+
+\begin{answer}\TODO\end{answer}
+
+\item \pts{3}
+    In the pooled data model,
+    you can compute the logarithm of the marginal likelihood of the hyper-parameters given the data as \texttt{betaln(a + n1, b + n0) - betaln(a, b)}
+    (which is the ratio of posterior and prior normalizing constants, converted to the log domain; \texttt{betaln} is from \texttt{scipy.special}).
+    Here, \texttt{n1} is the number of 1s, \texttt{n0} is the number of 0s, \texttt{a} gives the value of $\alpha$, and \texttt{b} gives the value of $\beta$.
+    \ask{Can you find the value of $\alpha$ and $\beta$ that optimize the marginal likelihood? (What are they, and what's the likelihood?)}
+
+\hint{%
+    It may be helpful to parameterize the beta distribution in terms of
+    $m=\alpha/(\alpha+\beta)$ (the proportion of 1s)
+    and $k = (\alpha+\beta)$ (the ``strength'' of our belief in this ratio).\footnote{%
+        Instead of writing the beta distribution as
+        $p(\theta \; | \; \alpha, \beta) \propto \theta^{\alpha-1}(1-\theta)^{\beta-1}$,
+        write it as $p(\theta \; | \; m, k) \propto \theta^{km-1}(1-\theta)^{k(1-m)-1}$.
+        The set of distributions you can represent is the same,
+        but the way the parameters change the distribution changes.}
+    Try setting $m$ to the MLE value of $\theta$ and varying $k$.}
+
+\begin{answer}\TODO\end{answer}
+
+
+\item \pts{5}
+    In the textbook where this data came from (Johnson and Albert, ``Ordinal Data Modeling''),
+    they suggest using an independent hyper-prior over $m$ and $k$ of the form
+    \[ p(m) \propto m^{.01-1}(1-m)^{9.9-1}, \quad p(k) \propto 1/(1+k)^2  .\]
+    The hyper-prior over $m$ is biased towards low values (since we expect the cancer to be rare) but not particularly strong,
+    while the prior over $k$ is similar to what is called a ``Jeffreys prior'' over scale variables 
+    (which would satisfy a particular definition of being an ``uninformative prior'').
+
+    In the pooled data model,
+    find the value of $\alpha$ and $\beta$ that optimize the marginal likelihood with this hyper-prior
+    (or equivalently, optimize the log of the marginal likelihood with the log of this prior as the regularizer).
+    \ask{Up to one decimal place, what are the optimal values of $\alpha$ and $\beta$ under this hyper-prior?
+         What values of $m$ and $k$ does this correspond to choosing?
+         Hand in your code for computing the objective function that is being optimized.}
+
+    \hint{For this question, you can use a ``brute force'' approach to find $\alpha$ and $\beta$, by searching over all values of the from \texttt{x.y} for \texttt{x} in \{0, \dots, 9\} and \texttt{y} in \{0, \dots, 9\} (but where at least one of \texttt{x} and \texttt{y} must be bigger than 0.}
+
+\begin{answer}\TODO\end{answer}
+
+
+\item \label{q:eb:newprior-sep} \pts{5}
+    Now that we have a better way to estimate,
+    we can return to the original setting with a separate parameter for each group.
+    The marginal likelihood is then given by just the product of what it was for the pooled data:
+    \[
+        p(\bX \mid \alpha, \beta) \propto
+        \prod_{j=1}^k \frac{Z(\alpha+n_{1j},\beta + n_{0j})}{Z(\alpha,\beta)}
+    ,\]
+    where $n_{1j}$ is the number of 1s in group $j$,
+    $n_{0j}$ is the number of 0s in group $j$,
+    and the normalizing constant $Z$ is the beta function.
+
+    Find the values of $\alpha$ and $\beta$ that optimize the marginal likelihood times the hyper-prior from the previous question.
+    You'll need to change the limits on the brute-force search;
+    keep in mind the meanings of $\alpha$ and $\beta$ and that cancer is (thankfully) relatively rare when you're deciding on the new limits.
+    \ask{Hand in your code to compute the objective function being optimized,
+         report the values of $\alpha$ and $\beta$ that you find,
+         and report the negative logarithm of the posterior predictive probability of the test data under this choice of $\alpha$ and $\beta$.}
+    If this is too slow, you can restrict the search to positive integer values for $\alpha$ and $\beta$.
+
+\begin{answer}\TODO\end{answer}
+
+\item \pts{2}
+    In the model from the last question,
+    \ask{what is the posterior predictive probability of seeing a 1 for a new group?}
+
+\begin{answer}\TODO\end{answer}
+
+\item \pts{2}
+    Under the choice of $\alpha$ and $\beta$ from \cref{q:eb:newprior-sep},
+    \ask{what is the NLL of the test data if we use MAP estimation for the parameters?}
+
+\begin{answer}\TODO\end{answer}
+
+\item \pts{2}
+    In this question, many of the best-performing methods achieve similar performance.
+    \ask{Give an explanation for why these different model choices do not make a big difference for this dataset.}
+
+\begin{answer}\TODO\end{answer}
+\end{qlist}
+
+
+\clearpage
+\section{More Deep Learning \pts{24}}
+
+\meta{The code for this question uses PyTorch; see \url{https://pytorch.org} for installation instructions (the CPU version is fine; if you're having trouble, you could also use \href{https://colab.research.google.com/}{Google Colab}). \href{https://pytorch.org/tutorials/beginner/basics/tensorqs_tutorial.html}{This tutorial page} is a decent starting place for reference.}
+
+\texttt{code/neural\_net.py} has our hand-coded neural net from the last assignment, and also an autodiff-based one using PyTorch's neural net interface. The two should be the same as written here; \texttt{main.py nns-35} runs the same 3-vs-5 classification problem as last time for both models. Take a look, and make sure things more or less make sense.
+
+\begin{qlist}
+
+\item \pts{3}
+    On the previous assignment, we concatenated all parameters into one big vector of parameters $w$. 
+    \ask{What's an advantage of not doing that, and just keeping separate weight matrices for each layer?}
+
+\begin{answer}\TODO\end{answer}
+
+\item \pts{3}
+    For the provided code in \texttt{TorchNeuralNetClassifier(layer\_sizes=[3])}, \ask{how many parameters are there, and what do they represent?}
+
+\hint{\texttt{list(thing.parameters())} will get you the parameters of either a layer or a \texttt{torch.nn.Module}.}
+
+\begin{answer}\TODO\end{answer}
+
+\item \pts{4} Modify the network to use a more typical classification loss: maximizing the likelihood of a categorical likelihood, aka softmax loss, aka cross-entropy. \ask{Hand in the modifications to your code.}
+
+\meta{You don't need to implement it yourself from scratch -- you can use anything from PyTorch here.}
+
+\begin{answer}\TODO\end{answer}
+
+
+\item \pts{3} PyTorch doesn't have an easy built-in way to compute the loss after going through a \texttt{torch.nn.Softmax} layer. \ask{Why not? Why does it insist on log inputs? Describe an example where using log-probabilities would give meaningfully different results from ``plain'' probabilities.}
+
+\begin{answer}\TODO\end{answer}
+
+\item \pts{4} Change \texttt{TorchNeuralNetClassifier} to work well on the 10-way actual MNIST dataset, which is run in \texttt{main.py nns-10way}. You'll probably do similar stuff to what you did last time, but use the softmax loss \meta{(if you want, also play around with L2 loss to compare)}. \ask{Describe the changes you made and your best test performance.}
+
+\begin{answer}\TODO\end{answer}
+
+\item \pts{4} Change the model in \texttt{Convnet.build} to use convolutional layers, while getting test error at least as good as the MLP got. (Feel free to make it less generic, e.g.\ not supporting arbitrary \texttt{layer\_sizes} anymore.) \ask{Submit your \texttt{build()} method, and any other relevant changes, as well as your final test error.} (We're probably overfitting a bit at this point, though\dots.)
+
+\hint{To make it a little faster by using your GPU, you can pass \texttt{device="cuda"} if you have an appropriate version of PyTorch installed, or \texttt{device="mps"} if you're a recent Mac.}
+
+\item \pts{3} If we use a layer \texttt{torch.nn.Conv2d(in\_channels=1, out\_channels=128, kernel\_size=(4, 4))}, \ask{what are the resulting parameter shapes, and why? Why don't we need to pass in the shape of the input image?}
+\begin{answer}\TODO\end{answer}
+
+\end{qlist}
+
+
+\pagebreak
+
+
+\section{Very-Short Answer Questions \pts{26}}
+
+Each of these is worth \pts{2}.
+
+\begin{qlist}
+\item When we use categorical variables, we assume that the categories do not have any special ordering. But we when sample from a categorical distribution, we use the CDF $p(x \leq c)$. \ask{Why does this make sense -- isn't it ``enforcing an order''?}
+\begin{answer}\TODO\end{answer}
+
+\item Monte Carlo methods approximate the expectation of a function of a random variable, but we said that they can be used to approximate probabilities. \ask{What random function would you use to approximate the probability of an event?}
+\begin{answer}\TODO\end{answer}
+
+
+\item \ask{How do MAP and Bayesian methods differ in how they make predictions?}
+\begin{answer}\TODO\end{answer} 
+
+\item \ask{Why do we say that Bayesian methods incorporate regularization, even though there is no regularization term in the posterior predictive distribution?}
+\begin{answer}\TODO\end{answer}
+
+
+\item \ask{How does using a conjugate prior simplify the marginal likelihood calculation?}
+\begin{answer}\TODO\end{answer}
+
+\item \ask{What is a hyper-hyper-parameter?}
+\begin{answer}\TODO\end{answer}
+
+\item Suppose we use the tabular parameterization for multi-class classification with $d$ features, where we have $k$ classes and each feature can take $k$ values. \ask{What is the exact number of parameters we need}, if we remove redundant parameters by exploiting that probabilities sum to 1?
+\begin{answer}\TODO\end{answer}
+
+\item In the softmax function we have $k$ weight vectors, one for each class. But in the special case of the sigmoid function we fix one of these weight vectors to zero, so we only have one weight vector for two classes. If we instead treat binary classification as a two-class problem with $k = 2$ weight vectors, \ask{would the set of classification functions our model can represent be different? Would our learning algorithm find the same function?}
+
+\begin{answer}\TODO\end{answer}
+
+\item If we use a neural network with one hidden layer for multi-class classification, \ask{what are the sizes of the parameter matrices $W$ and $V$, and what is the computational cost of backpropagation for one example?} You can use $k$ as the number of classes and $m$ as the number of hidden units.
+\begin{answer}\TODO\end{answer}
+
+\item \ask{Why can RNNs label sequence of different lengths?}
+\begin{answer}\TODO\end{answer}
+
+\item When predicting with sequence-to-sequence RNNs we do not know the length of the output sequence. \ask{How is the length of the output sequence determined during decoding?}
+\begin{answer}\TODO\end{answer}
+
+
+\item \ask{Why do we use ``context vectors" instead of including all encoding states in attention models?}
+\begin{answer}\TODO\end{answer}
+
+\item \ask{Why do we include ``position encodings'' in Trasformers?}
+\begin{answer}\TODO\end{answer}
+
+\end{qlist}
+
+
+\end{document}
+
