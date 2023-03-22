@@ -36,11 +36,20 @@ def berns_nll(thetas, data):
         for theta, (n_pos, n_total) in zip(thetas, data)
     )
 
+def map_betaprior_nll(alpha, beta, thetas, data):
+    return sum(
+        bernoulli_nll(theta, n_pos + alpha - 1, n_total + beta -1)
+        for theta, (n_pos, n_total) in zip(thetas, data)
+    )
+
 
 @handle("eb-base")
 def eb_base():
     n, n_test = load_dataset("cancerData", "n", "nTest")
     n_groups = n.shape[0]
+
+    print(n)
+    print(n_groups)
 
     theta = np.full(n_groups, 0.5)
     print(f"NLL for theta = 0.5: {berns_nll(theta, n_test) : .1f}")
@@ -53,16 +62,41 @@ def eb_base():
 @handle("eb-map")
 def eb_map():
     n, n_test = load_dataset("cancerData", "n", "nTest")
+    alpha = 2; beta = 2
 
-    raise NotImplementedError()
+    map_thetas = (n[:, 0] + alpha -1 ) / ((n[:, 0] + alpha -1 )+(n[:, 1] + beta - 1))
+
+    print(n)
+    print(map_thetas)
+
+    print(f"NLL with beta Prior of alpha = {alpha}, beta = {beta}: {map_betaprior_nll(alpha, beta, map_thetas, n_test) : .1f}")
 
 
 
 @handle("eb-bayes")
 def eb_bayes():
     n, n_test = load_dataset("cancerData", "n", "nTest")
+    alpha = 2; beta = 2
+    n_groups = n.shape[0]
 
-    raise NotImplementedError()
+    nll_post_predictive_prob = 0
+
+    n1 = n[:, 0]
+    n0 = n[:, 1] - n1
+
+    alpha_tilda = n1 + alpha
+    beta_tilda = n0 + beta
+
+    print(alpha_tilda)
+    print(beta_tilda)
+
+    for group in range(n_groups):
+        nll_post_predictive_prob += -1 * n1[group] * np.log((alpha_tilda[group]) / (alpha_tilda[group] + beta_tilda[group]))
+
+    print(f"NLL with separate posterior predictive probability: { nll_post_predictive_prob : .1f}")
+
+    ## p(xhat = 1 | X)
+    
 
 
 
