@@ -1,0 +1,396 @@
+\documentclass{article}
+
+\usepackage{fullpage}
+\usepackage{amsmath,amssymb}
+\usepackage{dsfont}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{centernot}
+
+\usepackage[colorlinks,linkcolor=red!80!black]{hyperref}
+\usepackage[noabbrev,capitalize]{cleveref}
+
+% Use one or the other of these for displaying code.
+% NOTE: If you get
+%  ! Package minted Error: You must invoke LaTeX with the -shell-escape flag.
+% and don't want to use minted, just comment out the next line
+\usepackage{minted} \BeforeBeginEnvironment{minted}{\begingroup\color{black}} \AfterEndEnvironment{minted}{\endgroup} \setminted{autogobble,breaklines,breakanywhere,linenos}
+
+\usepackage{listings}
+
+
+% Commands for questions and answers
+\definecolor{question}{rgb}{0,0,1}
+\newcommand{\ask}[1]{\textcolor{question}{#1}}
+\newenvironment{asking}{\begingroup\color{question}}{\endgroup}
+
+\crefname{section}{Question}{Questions}
+\newlist{qlist}{enumerate}{1}
+\setlist[qlist,1]{leftmargin=*, label=\textbf{(\thesection.\arabic*)}, ref={(\thesection.\arabic*)}}
+\crefname{qlisti}{part}{parts}
+
+\definecolor{answer}{rgb}{0,.5,0}
+\newcommand{\ans}[1]{\par\textcolor{answer}{Answer: #1}}
+\newenvironment{answer}{\par\begingroup\color{answer}Answer: }{\endgroup}
+
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+
+\definecolor{points}{rgb}{0.6,0.3,0}
+\newcommand{\pts}[1]{\textcolor{points}{[#1~points]}}
+\newcommand{\onept}[1]{\textcolor{points}{[1~point]}}
+
+\newcommand{\hint}[1]{\textcolor{black!60!white}{\emph{Hint: #1}}}
+\newcommand{\meta}[1]{\textcolor{black!60!white}{\emph{#1}}}
+
+\newcommand{\TODO}{\color{red}{TODO}}
+
+% misc shortcuts
+\newcommand{\fig}[2]{\includegraphics[width=#1\textwidth]{#2}}
+\newcommand{\centerfig}[2]{\begin{center}\includegraphics[width=#1\textwidth]{#2}\end{center}}
+
+% Math
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator{\E}{\mathbb{E}}
+\newcommand{\bigO}{\mathcal{O}}
+\newcommand{\bX}{\mathbf{X}}
+\DeclareMathOperator{\indic}{\mathds{1}}
+\newcommand\R{\mathbb{R}}
+\newcommand{\tp}{^\mathsf{T}}
+\newcommand{\ud}{\,\mathrm{d}}
+
+% https://tex.stackexchange.com/a/79436/9019
+\newcommand\indep{\protect\mathpalette{\protect\indeP}{\perp}}
+\def\indeP#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
+\newcommand\nindep{\centernot\indep}
+
+%%begin novalidate  % overleaf code check gives false positives here
+\makeatletter
+% \abs{} uses auto-sized bars; \abs*{} uses normal-sized ones
+\newcommand{\abs}{\@ifstar{\@Abs}{\@abs}}
+\newcommand{\@abs}[1]{\left\lvert #1 \right\rvert}
+\newcommand{\@Abs}[1]{\lvert #1 \rvert}
+
+\newcommand{\norm}{\@ifstar{\@Norm}{\@norm}}
+\newcommand{\@norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand{\@Norm}[1]{\lVert #1 \rVert}
+
+\newcommand{\ceil}{\@ifstar{\@Ceil}{\@ceil}}
+\newcommand{\@ceil}[1]{\left\lceil #1 \right\rceil}
+\newcommand{\@Ceil}[1]{\lceil #1 \rceil}
+
+\newcommand{\floor}{\@ifstar{\@Floor}{\@floor}}
+\newcommand{\@floor}[1]{\left\lfloor #1 \right\rfloor}
+\newcommand{\@Floor}[1]{\lfloor #1 \rfloor}
+
+\newcommand{\inner}{\@ifstar{\@Inner}{\@inner}}
+\newcommand{\@inner}[2]{\left\langle #1, #2 \right\rangle}
+\newcommand{\@Inner}[2]{\langle #1, #2 \rangle}
+\makeatother
+%%end novalidate  % overleaf code check false-positives here
+
+
+
+\begin{document}
+
+\begin{center}
+\Large
+CPSC 440/540 Machine Learning (Jan-Apr 2023)\\
+Assignment 4 --
+due Thursday April 13th at \textbf{11:59pm}
+\end{center}
+
+
+The assignment instructions are the same as for the previous assignments. If you do the assignment with a partner, please only hand in one copy for the group (using the appropriate Gradescope feature).
+
+
+
+
+
+
+\section{Generative Classifiers with Gaussian Assumption \pts{20}}
+
+Consider the 3-class classification dataset in this image:
+\centerfig{.5}{figs/sample}
+In this dataset, we have 2 features and each colour represents one of the classes. Note that the classes are highly structured: the colours each roughly follow a Gausian distribution plus some noisy samples.
+
+Since we have an idea of what the features look like for each class, we might consider classifying  inputs $x$ using a \emph{generative classifier}. In particular, we are going to use Bayes rule to write
+\[
+p(y^i=c\mid x^i,\Theta) = \frac{p(x^i\mid y^i=c, \Theta) \cdot p(y^i=c\mid\Theta)}{p(x^i\mid\Theta)},
+\]
+where $\Theta$ represents the parameters of our model. To classify a new example $\tilde{x}^i$, generative classifiers would use
+\[
+    \hat{y}^i
+    = \argmax_{y \in \{1,2,\dots,k\}} p(y^i=c \mid x^i, \Theta)
+    = \argmax_{y \in \{1,2,\dots,k\}} p(\tilde{x}^i \mid y^i=c,\Theta) p(y^i=c \mid \Theta)
+\]
+where in our case the total number of classes $k$ is $3$.
+% and $\theta_c$ is the set of parameters associated class $c$.
+Modeling $p(y^i=c\mid\Theta)$ is easy: we can just use a $k$-state categorical distribution,
+\[
+p(y^i = c \mid \Theta) = \theta_c,
+\]
+where $\theta_c$ is a single parameter for class $c$. The maximum likelihood estimate of $\theta_c$ is given by $n_c/n$, the number of times we have $y^i = c$ (which we've called $n_c$) divided by the total number of data points $n$.
+
+Modeling $p(x^i \mid y^i =c, \Theta)$ is the hard part: we need to know the \emph{probability of seeing the feature vector $x^i$ given that we are in class $c$}. This corresponds to solving a density estimation problem for each of the $k$ possible classes. 
+To make the density estimation problem tractable, we'll assume that the distribution of $x^i$ given that $y^i=c$ is given by a $\mathcal{N}(\mu_c,\Sigma_c)$ Gaussian distribution for a class-specific $\mu_c$ and $\Sigma_c$,
+\[
+p(x^i \mid y^i=c, \Theta) = \frac{1}{(2\pi)^{\frac{d}{2}}|\Sigma_c|^{\frac12}}\exp\left(-\frac12 (x^i-\mu_c)\tp \Sigma_c^{-1}(x^i-\mu_c)\right).
+\]
+Since we are distinguishing between the probability under $k$ different Gaussians to make our classification, this is called \emph{Gaussian discriminant analysis} (GDA).
+In the special case where we have a constant $\Sigma_c = \Sigma$ across all classes it is known as \emph{linear discriminant analysis} (LDA) since it leads to a linear classifier between any two classes (while the region of space assigned to each class forms a convex polyhedron, as in $k$-means clustering and softmax classification).
+Another common restriction on the $\Sigma_c$ is that they are diagonal matrices, since this only requires $O(d)$ parameters instead of $O(d^2)$ (corresponding to assuming that the features are independent univariate Gaussians given the class label).
+Given a dataset $\mathcal{D}=\{(x^i, y^i)\}_{i=1}^n$, where $x^i\in\R^d$ and $y^i\in\{1,\ldots,k\}$, the maximum likelihood estimate (MLE) for the $\mu_c$ and $\Sigma_c$ in the GDA model is the solution to
+\[
+\argmax_{\mu_1,\mu_2,\dots,\mu_k,\Sigma_1,\Sigma_2,\dots,\Sigma_k} \prod_{i=1}^n p(x^i \mid y^i, \mu_{y^i},\Sigma_{y^i}).
+\]
+This means that the negative log-likelihood will be  equal to
+\begin{align*}
+    - \log p(X\mid y,\Theta) & = -\sum_{i=1}^n \log p(x^i \mid y^i, \mu_{y^i},\Sigma_{y^i})\\
+    & = \sum_{i=1}^n \frac{1}{2}(x^i - \mu_{y^i})\tp \Sigma_{y^i}^{-1}(x^i - \mu_{y^i}) + \frac12\sum_{i=1}^n \log|\Sigma_{y^i}| + \text{const.}
+\end{align*}
+In class we stated the MLE for this model under the assumption that we use full covariance matrices and that each class has its own covariance.
+\begin{qlist}
+\item \pts{5}
+    \ask{Derive the MLE for the GDA model under the assumption of \emph{common diagonal covariance} matrices},
+    $\Sigma_c = D$.
+    Note that this means there are $d$ total parameters for the model's covariances
+    (plus $k d$ parameters in each class's separate mean, $\mu_c$).
+
+\hint{%
+    You might be able to significantly simply notation if you write something like $\sum_{i : y^i = c}$,
+    or define some shortcut notation like $\sum_{i \in y_c}$ to mean the same thing;
+    just make sure it's clear.
+    You also might want to use $n_c = \sum_{i \in y_c} 1$ to be the number of cases where $y^i = c$.
+}
+
+\hint{%
+    The determinant of a diagonal matrix is the product of its diagonal entries.
+    The inverse is the diagonal matrix where each diagonal entry is inverted.
+}
+
+\begin{answer}\TODO\end{answer}
+
+\item \pts{5}
+    \ask{Derive the MLE for the GDA model under the assumption of \emph{individual scaled-identity} matrices},
+    $\Sigma_c = \sigma_c^2 I$;
+    here there are $k$ total covariance parameters, one per class.
+
+\begin{answer}\TODO\end{answer}
+
+\item \pts{5}
+    When you run \texttt{main.py gda} it loads a variant of the dataset in the figure that has 12 features and 10 classes.
+    This data has been split up into a training and test set, and the code fits a $k$-nearest neighbour classifier to the training set then reports the accuracy on the test data (around $\sim 63\%$ test error).
+    The $k$-nearest neighbour model does poorly here since it doesn't take into account the Gaussian-like structure in feature space for each class label.
+
+    Fill in the class \texttt{GDA} to fit a GDA model to this dataset, using the MLE with individual \emph{full} covariance matrices. 
+    \ask{Hand in your code, and report the test set accuracy}.
+
+    \hint{You can use the result from class about the MLE for this model.}
+
+    \hint{You probably want to handle everything ``in log space'' for your computation.}
+
+\begin{answer}\TODO\end{answer}
+
+\item \pts{5}
+    The data here has some outliers.
+    Let's try to replace the Gaussian distribution of the previous solution with a more robust multivariate $t$ distribution.
+    Unfortunately this distribution doesn't have a closed-form MLE,
+    but \texttt{student\_t.MultivariateT} implements numerical optimization.
+    Fill in the class \texttt{generative\_classifiers.TDA},
+    called by \texttt{main.py tda},
+    to fit a generative model based on the multivariate $t$ distribution.
+    \ask{Report your test accuracy and hand in your code.}
+
+    \hint{These take a little longer to fit; you might want to print some kind of status update as you go to make sure it's happening. The \texttt{tqdm} package would be a very nice, fancy version of that\dots.}
+
+\begin{answer}\TODO\end{answer}
+
+\end{qlist}
+
+
+
+
+
+\clearpage
+\section{Discrete Markov Chain Inference \pts{25}}
+
+The function \emph{example\_markov.jl} loads the initial state probabilities and transition probabilities for a Markov chain model,
+\[
+p(x_1,x_2,\dots,x_d) = p(x_1)\prod_{j=2}^{d}{p(x_j\mid x_{j-1})},
+\]
+corresponding to the ``grad student Markov chain'' from class.
+
+Note that we're assuming the Markov chain \red{starts at time 1};
+since Python indexing starts from time 0, be careful.
+
+\begin{qlist}
+\item \pts{3}
+    Write a function, \texttt{MarkovChain.sample}, that uses ancestral sampling to sample sequences $x$ from this Markov chain of length $d$. \ask{Hand in this code, and report the univariate marginal probabilities for time 50 using a Monte Carlo estimate based on 10,000 samples (from \texttt{main.py mc-sample}).}
+
+\hint{\href{https://numpy.org/doc/stable/reference/random/generated/numpy.random.Generator.choice.html}{\texttt{rng.choice}} might be helpful.}
+
+\begin{answer}\TODO\end{answer}
+
+\item \pts{3}
+    Write a function, \texttt{MarkovChain.marginals}, that uses the CK equations to compute the exact univariate marginals up to a given time $d$. Use \texttt{main.py mc-marginals} to find the exact marginals at time 50. \ask{Hand in this code, report the exact univariate marginals at time 50 (to three decimal places), and report how this differs from the marginals in the previous question.}
+\begin{answer}\TODO\end{answer}
+
+\item \pts{2}
+    \ask{What is the state $c$ with highest marginal probability, $p(x_j = c)$, for each time $j$?}
+\begin{answer}\TODO\end{answer}
+
+\item \pts{5}
+    Write a function, \texttt{MarkovChain.mode}, that uses the Viterbi decoding algorithm for Markov chains to find the optimal decoding up to a time $d$.
+    \ask{Hand in this code and report the optimal decoding of the Markov chain up to time 50, and up to 100.}
+\begin{answer}\TODO\end{answer}
+
+\item \pts{2}
+    \ask{Report all the univariate conditional probabilities at time 50 if the student starts in grad school, $p(x_{50} = c \mid x_1 = 2)$, for all $c$}.
+
+\hint{you can do this by changing the input to the CK equations.}
+
+\begin{answer}\TODO\end{answer}
+
+\item \pts{3}
+    \ask{Report for all $c$ the univariate conditional probabilities $p(x_3 = c \mid  x_{6} = 5)$ (``where you were likely to be 3 years after graduation, if you ended up in academia after 6 years'') obtained using a Monte Carlo estimate based on 10,000 samples and rejection sampling. Also report the number of samples accepted from the 10,000 samples.}
+\begin{answer}\TODO\end{answer}
+
+\item \pts{5}
+    \ask{Give code implementing a dynamic programming approach to exactly compute $p(x_3 = c \mid  x_{6} = 5)$, and report the exact values for all $c$.}
+\begin{answer}\TODO\end{answer}
+
+\item \pts{2} \ask{Why is $p(x_j = \red{6} \mid x_{20} = \red{5})$ equal to zero for all $j$ less than $20$?}
+\begin{answer}\TODO\end{answer}
+
+\end{qlist}
+
+
+\clearpage
+\section{Markov Chain Monte Carlo for Bayesian Logistic Regression \pts{10}}
+
+
+\texttt{main.py mcmc-blogreg} loads a set of images of `2' and `3' digits.
+It then runs the Metropolis MCMC algorithm to try to generate samples from the posterior over $w$, in a logistic regression model with a Gaussian prior.
+Once the samples are generated, it makes a histogram of the samples for several of the variables.\footnote{The ``positive'' variables are some of the positive weights  when you fit an L2-regularized logistic regression model to the this data. The ``negative'' variables are some of the negative regression weights in that model, and the ``neutral'' ones are set to 0 in that model.}
+
+\begin{qlist}
+
+\item \pts{3} \ask{Why might the samples coming from the Metropolis algorithm as run here not give a good approximation to the posterior?}
+\begin{answer}\TODO\end{answer}
+
+\item \pts{4} Modify the proposal used by the demo to $\hat{w} \sim \mathcal{N}(w,(1/100) I)$ instead of $\hat{w} \sim \mathcal{N}(w,I)$. \ask{Hand in your code and the updated histogram plot.}
+
+\begin{answer}\TODO\end{answer}
+
+\item \pts{3} Modify the proposal to use $\hat{w} \sim \mathcal{N}(w,(1/10000) I)$. \ask{Do you think this performs better or worse than the previous choice? (Briefly explain.)}
+\begin{answer}\TODO\end{answer}
+
+\end{qlist}
+
+
+
+\clearpage
+\section{D-Separation \pts{15}}
+
+Consider the DAG model below, for distinguishing between different causes of shortness-of-breath (dyspnoea) and the causes of an abnormal lung x-ray, while  modelling potential causes of these diseases too (whether the person is a smoker or had a `visit' to a country with a high degree to tuberculosis).
+
+\centerfig{.8}{figs/bayesNet}
+
+We'll assume that the distribution over the variables is ``faithful" to the graph, meaning that variables are conditionally independent if and only if the graph structure implies their independence. Under this assumption, \ask{say why each of the following conditional independence statements is true or false, along with a very brief justification}:
+
+Each of these is worth \pts{1.5}.
+
+\begin{qlist}
+\item (Smoking) $\indep$ (Bronchitis).
+\begin{answer}\TODO\end{answer}
+
+\item (Smoking) $\indep$ (Dyspnoea).
+\begin{answer}\TODO\end{answer}
+
+\item (Tuberculosis) $\indep$ (Lung Cancer).
+\begin{answer}\TODO\end{answer}
+
+\item (Abnormal X-Ray) $\indep$ (Visit) $|$ (Tuberculosis).
+\begin{answer}\TODO\end{answer}
+
+\item (Bronchitis) $\indep$ (Lung Cancer) $|$ (Smoking).
+\begin{answer}\TODO\end{answer}
+
+\item (Abnormal X-Ray) $\indep$ (Dyspnoea).
+\begin{answer}\TODO\end{answer}
+
+\item (Tuberculosis) $\indep$ (Lung Cancer) $|$ (Dyspnoea).
+\begin{answer}\TODO\end{answer}
+
+\item (Visit,Smoking) $\indep$ (Abnormal X-Ray, Dyspnoea) $|$ (Tuberculosis, Lung Cancer, Bronchitis)
+\begin{answer}\TODO\end{answer}
+
+\item (Tuberculosis) $\indep$ (Bronchitis) $|$ (Abnormal X-Ray).
+\begin{answer}\TODO\end{answer}
+
+\item (Smoking) $\indep$ (Visit) $|$ (Dyspnoea).
+\begin{answer}\TODO\end{answer}
+\end{qlist}
+
+
+
+\clearpage
+\section{Very-Short Answer Questions \pts{30}}
+
+Each of these is worth \pts{2}.
+
+\begin{qlist}
+\item How does the affine property allow us to sample from multivariate Gaussians?
+\begin{answer}\TODO\end{answer}
+
+\item What is the relationship between using a product of Gaussians and using a multivariate Gaussian?
+\begin{answer}\TODO\end{answer}
+
+\item With a Gaussian likelihood, a Gaussian prior for its mean, and a fixed covariance, how do we know that the posterior predictive will also be a Gaussian?
+\begin{answer}\TODO\end{answer}
+
+\item How do the sparsity patterns of the covariance and precision matrix in a multivariate Gaussian relate to independence and conditional independence in the models?
+\begin{answer}\TODO\end{answer}
+
+\item In linear discriminant analysis, why might we not assign a point to its closest mean?
+\begin{answer}\TODO\end{answer}
+
+\item The maximum of the posterior predictive in Bayesian linear regression gives the same prediction as if we used the MAP estimate. What is a reason we might use Bayesian linear regression anyways?
+\begin{answer}\TODO\end{answer}
+
+\item What is the key difference between Monte Carlo approximations and variational approximations?
+\begin{answer}\TODO\end{answer}
+
+\item What is a key advantage of ``end-to-end'' training of computer vision system?
+\begin{answer}\TODO\end{answer}
+
+
+\item{What is $\nabla_\theta \log Z(\theta)$ for an exponential family in canonical form? (Give an interpretable form in terms of the sufficient statistics; no need to derive it, just the answer.)}
+\begin{answer}\TODO\end{answer}
+
+\item What is the difference between computing marginals and computing the stationary distribution of a Markov chain.
+\begin{answer}\TODO\end{answer}
+
+\item What is the cost of generating a sample from a Markov chain of length $d$ with $k$ possible states for each time? What is the cost of decoding?
+\begin{answer}\TODO\end{answer}
+
+\item In what setting is it unnecessary to include the $q$ function in the Metropolis-Hastings acceptance probability?
+\begin{answer}\TODO\end{answer}
+
+\item What is ``explaining away''?
+\begin{answer}\TODO\end{answer}
+
+\item If two variables are not d-separated, are they necessarily dependent? If two variables are d-separated, are they necessarily independent?
+\begin{answer}\TODO\end{answer}
+
+\item Describe how we could use ancestral sampling to sample from the joint density over $x$ and $y$ defined by a Gaussian discriminant analysis model.
+\begin{answer}\TODO\end{answer}
+
+\end{qlist}
+
+\end{document}
