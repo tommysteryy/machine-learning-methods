@@ -30,10 +30,10 @@ class NeuralNetClassifier:
         X=None,
         y=None,
         max_iter=10_000,
-        learning_rate=0.0001,
-        init_scale=1,
-        batch_size=1,
-        weight_decay=0,
+        learning_rate=0.0002,
+        init_scale=0.1,
+        batch_size=5,
+        weight_decay=0.0001,
     ):
         self.hidden_layer_sizes = hidden_layer_sizes
         self.learning_rate = learning_rate
@@ -173,11 +173,13 @@ class TorchNeuralNetClassifier(nn.Module):
             layers.append(nn.Tanh())
 
         layers.pop(-1)  # drop the final tanh
+        # layers[-1] = nn.Linear(layer_sizes[-2], out_dim, device=self.device)
+        # nn.init.normal_(layers[-1].weight, mean=0, std=self.init_scale)
 
         self.layers = nn.Sequential(*layers)
 
     def make_optimizer(self):
-        return torch.optim.SGD(
+        return torch.optim.Adam(
             self.parameters(), lr=self.learning_rate, weight_decay=self.weight_decay
         )
 
@@ -213,6 +215,12 @@ class TorchNeuralNetClassifier(nn.Module):
             if i % 500 == 0:
                 print(f"Iteration {i:>10,}: loss = {loss:>6.3f}")
 
+            # if i % 9000 == 0:
+            #     print(f"yhat looks like {yhat}")
+            #     # print(f"y[inds] looks like {y[inds]}")
+            #     print(f"y_transform looks like {torch.argmax(y[inds], dim=1)}")
+            #     # print(f"preds looks like {preds}")
+
     def predict(self, X):
         # hard class predictions (for soft ones, just call the model like the Z line below)
         with torch.no_grad():
@@ -243,5 +251,23 @@ class Convnet(TorchNeuralNetClassifier):
 
     def build(self, in_dim, out_dim):
         # assign self.layers to an nn.Sequential with some Conv2d (and other) layers in it
-        raise NotImplementedError()
+        # layer_sizes = []
+
+        layers = []
+        # for in_size, out_size in zip(layer_sizes[:-1], layer_sizes[1:]):
+        #     lin = nn.Linear(in_size, out_size, device=self.device)
+        #     nn.init.normal_(lin.weight, mean=0, std=self.init_scale)
+        #     layers.append(lin)
+        #     layers.append(nn.ReLU())
+        layers.append(nn.Conv2d(1, 128, kernel_size = (4,4)))
+        layers.append(nn.ReLU())
+        # layers.append(nn.Conv2d(10, 20, kernel_size = 3, padding = 1))
+        # layers.append(nn.ReLU())
+        layers.append(nn.MaxPool2d(2, 2))
+        layers.append(nn.Flatten(1, -1))
+        # layers.append(nn.Linear(16, out_dim))
+        layers.append(nn.LazyLinear(out_dim))
+
+
+        self.layers = nn.Sequential(*layers)
 
