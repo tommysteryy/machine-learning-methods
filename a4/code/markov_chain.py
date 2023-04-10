@@ -49,6 +49,36 @@ class MarkovChain:
         """
         DP: M[j] = max{ p(x_j | x_{j-1}) * M[j-1]}
         """
+        ## M[t, k] = highest probability achievable to get to time t and in state k
+        M = np.zeros((d, self.p1.size))
+        
+        ## B[t, k] = the corresponding state which achieved the highest probability in M[t, k]
+        B = np.zeros((d, self.p1.size))
+
+        best_sequence = []
+        
+        for t in range(d):
+            if (t == 0):
+                m = self.p1
+                M[t] = m
+                B[t] = -1
+            else:
+                m_prev = M[t-1]
+                probs = self.pt.T * m_prev
+                max_probs = probs.max(axis = 1)
+                max_probs_index = probs.argmax(axis = 1)
+
+                M[t] = max_probs
+                B[t] = max_probs_index
+
+                index_with_highest_probability = max_probs.argmax()
+                state_with_highest_probability = max_probs_index[index_with_highest_probability]
+
+                best_sequence.append(state_with_highest_probability)
+
+        return best_sequence
+
+                
 
 
     # TODO: method here for mc-conditional-exact

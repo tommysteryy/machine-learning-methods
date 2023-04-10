@@ -114,6 +114,8 @@ def mc_mostlikely_sequence():
     p1, pt = load_dataset("gradChain", "p1", "pt")
     model = MarkovChain(p1, pt)
 
+    # print(p1)
+
     for time in [50, 100]:
         print(f"Decoding to time {time}: {model.mode(time)}")
 
