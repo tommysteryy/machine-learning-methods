@@ -72,6 +72,7 @@ def mc_sample():
     n_samples = 10000
     time = 50
     samples = model.sample(n_samples, time)
+    print(samples)
     est = np.bincount(samples[:, time - 1]) / n_samples
     print(f"Empirical dist, time {time}: {est.round(3)}")
 
@@ -81,7 +82,21 @@ def mc_marginals():
     p1, pt = load_dataset("gradChain", "p1", "pt")
     model = MarkovChain(p1, pt)
 
-    raise NotImplementedError()
+    # print(p1)
+    # print(pt)
+
+    n_samples = 10000
+    time = 50
+    samples = model.sample(n_samples, time)
+    # print(samples)
+    est = np.bincount(samples[:, time - 1]) / n_samples
+    print(f"Empirical dist, time {time}: {est.round(3)}")
+
+    marginals = model.marginals(time)
+    print(marginals)
+    print(marginals.argmax(axis=1))
+
+    # raise NotImplementedError()
 
 
 

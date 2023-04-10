@@ -16,18 +16,39 @@ class MarkovChain:
             rng = np.random.default_rng()
 
         samples = np.zeros((n_samples, d), dtype=int)
-        raise NotImplementedError()
 
+        states = len(self.p1)
+        
+        for t in range(d):
+            for x_i in range(n_samples):
+                if t == 0:
+                    samples[x_i, t] = rng.choice(states, p = self.p1)
+                else:
+                    prev_state = samples[x_i, t-1]
+                    transition_probs = self.pt[prev_state]
+                    samples[x_i, t] = rng.choice(states, p = transition_probs)
+                
         return samples
 
     def marginals(self, d):
-        M = np.zeros((self.p1.size, d))
-        raise NotImplementedError()
+        # M = np.zeros((self.p1.size, d))
+        M = np.zeros((d, self.p1.size))
+        
+        for time in range(d):
+            if time == 0:
+                margs = self.p1
+            else:
+                pi_j = M[time - 1]
+                margs = self.pt.T @ pi_j.T 
+
+            M[time] = margs
 
         return M
 
     def mode(self, d):
-        raise NotImplementedError()
+        """
+        DP: M[j] = max{ p(x_j | x_{j-1}) * M[j-1]}
+        """
 
 
     # TODO: method here for mc-conditional-exact
