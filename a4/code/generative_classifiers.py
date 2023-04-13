@@ -105,10 +105,8 @@ class TDA:
 
         for cls in range(self.c):
             T_dist = self.Ts[cls]
-            probs_for_cls = -np.log(self.ps[cls]) + T_dist.log_prob(Xtest)
+            probs_for_cls = np.log(self.ps[cls]) + T_dist.log_prob(Xtest)
             probs_all[cls] = probs_for_cls
 
-        # print(probs_all)
-
-        return probs_all.argmin(axis=0)
+        return probs_all.argmax(axis=0)
 
