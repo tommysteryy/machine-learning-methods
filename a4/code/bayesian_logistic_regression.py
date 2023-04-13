@@ -25,7 +25,7 @@ class BayesianLogisticRegression:
         n_accept = 0
 
         for i in range(1, n_samples):
-            w_hat = w + rng.normal(loc=0, scale=1, size=d)
+            w_hat = w + rng.normal(loc=0, scale=0.00001, size=d)
             log_phat = self.log_likelihood(X, y, w_hat, self.lam)
 
             log_r = log_phat - log_p
@@ -69,6 +69,6 @@ class BayesianLogisticRegression:
         if figname is None:
             plt.show()
         else:
-            fn = f"../figs/{figname}.png"
+            fn = f"../figs/{figname}-3-3.png"
             fig.savefig(fn, bbox_inches="tight", pad_inches=0.1)
             print(f"Saved to {fn}")
