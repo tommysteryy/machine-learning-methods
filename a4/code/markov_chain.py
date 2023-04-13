@@ -29,6 +29,25 @@ class MarkovChain:
                     samples[x_i, t] = rng.choice(states, p = transition_probs)
                 
         return samples
+    
+    def mc_conditionals(self, start_time, end_time, end_state):
+        """
+        Returns p(x_start_time | x_end_time = end_state) for all values of x_start_time.
+        Uses dynamic programming to "store" the intermediate sums.
+        """
+        M = np.zeros((end_time, self.p1.size))
+
+        for time in range(end_time - 1):
+            if time == 0:
+                p_x_j = self.p1
+                M[time] = p_x_j
+            else:
+                m_prev = M[time - 1]
+                M[time] = self.pt.T @ m_prev
+
+        m_prev = M[time - 1]
+        return self.pt.T @ m_prev.T
+
 
     def marginals(self, d):
         # M = np.zeros((self.p1.size, d))
@@ -77,8 +96,8 @@ class MarkovChain:
                 best_sequence.append(state_with_highest_probability)
 
         return best_sequence
+    
+    
+    
 
-                
-
-
-    # TODO: method here for mc-conditional-exact
+    
