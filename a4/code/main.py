@@ -32,6 +32,10 @@ from bayesian_logistic_regression import BayesianLogisticRegression
 
 def eval_models(models, ds_name):
     X, y, Xtest, ytest = load_dataset(ds_name, "X", "y", "Xtest", "ytest")
+    # print(X)
+    # print(X.shape)
+    # print(y)
+    # print(y.shape)
     for model in models:
         model.fit(X, y)
         yhat = model.predict(Xtest)
@@ -46,8 +50,21 @@ def eval_model(model, ds_name):
 def gda():
     model = KNN(1)
     print(f"{model.k}-NN test error: {eval_model(model, 'gaussNoise'):.1%}")
-
+    # X, y, Xtest, ytest = load_dataset("gaussNoise", "X", "y", "Xtest", "ytest")
+    
     model = GDA()
+    # print(X[:20])
+    # print(y[:20])
+    # print("==============")
+    # # X_20 = X[:20]
+    # # y_20 = y[:20]
+    
+    # print(X[y == 8][:5])
+    # print(y[y == 8][:5])
+    # model.fit(X, y)
+    # # print(model.nll(X))
+    # print(model.predict(Xtest)[:20])
+    # print(ytest[:20])
     print(f"GDA  test error: {eval_model(model, 'gaussNoise'):.1%}")
 
 
@@ -124,7 +141,27 @@ def mc_mostlikely_sequence():
 def mc_gradschool_50():
     p1, pt = load_dataset("gradChain", "p1", "pt")
 
-    raise NotImplementedError()
+    # start_state = 2
+    # start_time = 1
+    # end = 10
+
+    # def cond_prob(start_state, start_time, end_time):
+    #     """
+    #     Return the p1.size length vector with the conditional probabilities:
+    #         p(x_end | x_start_time = start_state)
+    #     CONSTAINTS: 
+    #     - end must be at least 1 away from start_time
+    #     - everything must be valid
+    #     """
+    #     if (end_time == 1):
+    #         return pt[start_state]
+    #     else:
+    #         return pt.T @ cond_prob(start_state, start_time, end_time -1) 
+    
+    # print(cond_prob(start_state, start_time, end))
+    print(p1)
+    print(pt)
+
 
 
 
@@ -133,7 +170,7 @@ def mc_conditional_mc():
     p1, pt = load_dataset("gradChain", "p1", "pt")
     model = MarkovChain(p1, pt)
 
-    raise NotImplementedError()
+    print(model.mc_conditionals(3, 6, 0))
 
 
 
