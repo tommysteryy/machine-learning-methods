@@ -72,14 +72,6 @@ class GDA:
         NLLs = self.nll(Xtest)
         return NLLs.argmin(axis=1)
 
-
-    
-            
-
-        
-
-
-
 class TDA:
     def __init__(self, X=None, y=None):
         if X is not None and y is not None:
