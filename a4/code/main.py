@@ -207,6 +207,7 @@ def mc_conditional_exact():
 
     rejection_rate = 1 - accepted / n_samples
     print(f"rejection rate = {rejection_rate}")
+    print(f"Accepted: {accepted}")
     print(f"Estimated probabilities = {counts_c / accepted}")
 
 
@@ -220,8 +221,6 @@ def mcmc_blogreg():
 
     model = BayesianLogisticRegression()
     samples = model.sample_weights(X, y)
-    print(samples)
-    print(samples.shape)
     
     model.plot_weights(samples, figname="blogreg")
 

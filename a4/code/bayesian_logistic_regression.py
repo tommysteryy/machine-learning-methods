@@ -69,6 +69,6 @@ class BayesianLogisticRegression:
         if figname is None:
             plt.show()
         else:
-            fn = f"../figs/{figname}-3-3.png"
+            fn = f"../figs/{figname}-10000.png"
             fig.savefig(fn, bbox_inches="tight", pad_inches=0.1)
             print(f"Saved to {fn}")
