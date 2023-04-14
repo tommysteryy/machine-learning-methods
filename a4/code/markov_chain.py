@@ -30,23 +30,40 @@ class MarkovChain:
                 
         return samples
     
-    def mc_conditionals(self, start_time, end_time, end_state):
+    def mc_conditionals(self, start_time, start_state, end_time, end_state):
         """
-        Returns p(x_start_time | x_end_time = end_state) for all values of x_start_time.
-        Uses dynamic programming to "store" the intermediate sums.
+        Returns p(x_start_time = start_state | x_end_time = end_state) for specific values.
         """
-        M = np.zeros((end_time, self.p1.size))
+        m_prev = np.zeros(self.p1.size)
 
-        for time in range(end_time - 1):
+        for time in range(end_time):
+
             if time == 0:
                 p_x_j = self.p1
-                M[time] = p_x_j
-            else:
-                m_prev = M[time - 1]
-                M[time] = self.pt.T @ m_prev
+                m_prev = p_x_j
 
-        m_prev = M[time - 1]
-        return self.pt.T @ m_prev.T
+            elif (time == start_time - 1):
+                ## This is the summation going into @start_time
+                ## i.e \sum_x2 (p(x_3 = @start_state | x_2) * M_2)
+                p_next_given_curr = self.pt.T[start_state]
+                m_prev = p_next_given_curr @ m_prev.T
+
+            elif (time == start_time):
+                ## this is the simple multiplication coming out of @start_time
+                ## i.e M_4 = p(x_4 | x_3 = @start_state) * M_3
+                transitions = self.pt[start_state]
+                m_prev = transitions * m_prev
+
+            elif (time == end_time - 1):
+                ## this is the summation going into @end_time
+                ## i.e M_6 = p(x_6 = @end_state | x_5) * M_5
+                transition_to_last_state = self.pt.T[end_state]
+                m_prev = transition_to_last_state.T @ m_prev
+
+            else:
+                m_prev = self.pt @ m_prev
+
+        return m_prev
 
 
     def marginals(self, d):
