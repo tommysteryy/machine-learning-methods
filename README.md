@@ -1,5 +1,7 @@
 # Machine Learning Implementation & Applications
-A collection of from-scratch implementations of traditional ML models, built independently during UBC CPSC 340: Machine Learning and Data Mining.
+A collection of from-scratch implementations of traditional ML models, insightful visualizations, and mathematical derivations completed independently during both undergraduate ML courses at UBC Vancouver:
+- UBC CPSC 532M/340: Machine Learning and Data Mining (Jan - Apr 2022)
+- UBC CPSC 540/440: Advanced Machine Learning (Jan - Apr 2023)
 
 ## Simple Regression
 ### Linear Regression, Robust Linear Regression,  Polynomial Bases
