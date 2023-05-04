@@ -9,10 +9,22 @@ A collection of from-scratch implementations of traditional ML models, built ind
 ### Logistic Regression, Softmax Classifiers, Convexity
 ![further-reg-display](FurtherReg/display-further-reg.jpg)
 
-## Math-y
+## Advanced Unsupervised Learning
+### Robust PCA, Collaborative Filtering
+![advunsup-display](AdvancedUnsupervised/figs/display-unsup.jpg)
+
+## Miscellaneous
 ### PCA, MAP Estimation, Stochastic Gradient Descent
 ![mathy-display](MathyML/figs/display-math.jpg)
 
-## Advanced Unsupervised Learning
-### Robust PCA, Collaborative Filtering, Neural Networks
-![advunsup-display](AdvancedUnsupervised/figs/display-unsup.jpg)
+## Markov Chains & Monte Carlo Methods
+### Ancestral sampling, Marginal and Conditional Probabilities, Viterbi Decoding, Monte Carlo Approximation
+
+## Generative Classifiers (GDA) 
+### Gaussian Discriminant Analysis, Discriminant Analysis with Student-t
+
+## Bayesian Methods
+### Vector-quantized Naive Bayes, Posterior-predictive Probability
+
+## Deep Learning
+### Neural networks, 10-way MNIST Classification, ConvNet
