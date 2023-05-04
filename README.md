@@ -27,6 +27,7 @@ A collection of from-scratch implementations of traditional ML models, built ind
 
 ## Bayesian Methods
 ### Vector-quantized Naive Bayes, Posterior-predictive Probability
+![bayes-display](Bayesian/figs/bayes-display.png)
 
 ## Deep Learning
 ### Neural networks, 10-way MNIST Classification, ConvNet
