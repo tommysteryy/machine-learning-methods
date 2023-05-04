@@ -34,4 +34,3 @@ A collection of from-scratch implementations of traditional ML models, built ind
   <img src="DeepLearning/figs/deep-learning-display.png" width="49%" />
   <img src="DeepLearning/figs/nn-regressor.gif" width="50%" /> 
 </p>
-![deep-learn-display](DeepLearning/figs/deep-learning-display.png "" =20%x) ![nn-regression](DeepLearning/figs/nn-regressor.gif "" =80%x)
