@@ -23,6 +23,7 @@ A collection of from-scratch implementations of traditional ML models, built ind
 
 ## Generative Classifiers
 ### Gaussian Discriminant Analysis, Discriminant Analysis with Student-t
+![generative-classifier-display](GenerativeClassifiers/figs/gen-class-display.png)
 
 ## Bayesian Methods
 ### Vector-quantized Naive Bayes, Posterior-predictive Probability

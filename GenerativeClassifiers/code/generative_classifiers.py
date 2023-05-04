@@ -11,7 +11,6 @@ class GDA:
         if X is not None and y is not None:
             self.fit(X, y)
             
-
     def fit(self, X, y):
         self.c = 10
         n, d = X.shape
@@ -73,6 +72,7 @@ class GDA:
         return NLLs.argmin(axis=1)
 
 class TDA:
+    ## GDA except each cluster follows the student-t
     def __init__(self, X=None, y=None):
         if X is not None and y is not None:
             self.fit(X, y)
