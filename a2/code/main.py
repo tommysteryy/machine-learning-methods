@@ -156,7 +156,10 @@ def q_4_2():
 def q_4_3():
     X, y, Xtest, ytest = load_dataset("mnist35", "X", "y", "Xtest", "ytest")
 
-    model = NeuralNetClassifier([50, 25, 10, 20, 45], batch_size = 100, init_scale=0.5, learning_rate = 0.0005)
+    model = NeuralNetClassifier(hidden_layer_sizes=[50, 25, 10, 20, 45], 
+                                batch_size = 100, 
+                                init_scale=0.5, 
+                                learning_rate = 0.0005)
     model.fit(X, y)
     yhat = model.predict(Xtest)
     print(f"Test set error: {np.mean(yhat != ytest):.1%}")
