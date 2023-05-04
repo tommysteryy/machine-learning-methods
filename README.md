@@ -19,6 +19,7 @@ A collection of from-scratch implementations of traditional ML models, built ind
 
 ## Markov Chains & Monte Carlo Methods
 ### Ancestral sampling, Marginal and Conditional Probabilities, Viterbi Decoding, Monte Carlo Approximation
+![mc-mc-display](MC_MC/figs/mc-mc-display.png)
 
 ## Generative Classifiers
 ### Gaussian Discriminant Analysis, Discriminant Analysis with Student-t
