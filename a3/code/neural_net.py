@@ -250,24 +250,15 @@ class Convnet(TorchNeuralNetClassifier):
         return super().forward(unflattened)
 
     def build(self, in_dim, out_dim):
-        # assign self.layers to an nn.Sequential with some Conv2d (and other) layers in it
-        # layer_sizes = []
 
         layers = []
-        # for in_size, out_size in zip(layer_sizes[:-1], layer_sizes[1:]):
-        #     lin = nn.Linear(in_size, out_size, device=self.device)
-        #     nn.init.normal_(lin.weight, mean=0, std=self.init_scale)
-        #     layers.append(lin)
-        #     layers.append(nn.ReLU())
-        layers.append(nn.Conv2d(1, 128, kernel_size = (4,4)))
+        layers.append(nn.Conv2d(1, 8, kernel_size = 3, padding = 1))
         layers.append(nn.ReLU())
-        # layers.append(nn.Conv2d(10, 20, kernel_size = 3, padding = 1))
-        # layers.append(nn.ReLU())
+        layers.append(nn.Conv2d(8, 20, kernel_size = 3, padding = 1))
+        layers.append(nn.ReLU())
         layers.append(nn.MaxPool2d(2, 2))
         layers.append(nn.Flatten(1, -1))
-        # layers.append(nn.Linear(16, out_dim))
         layers.append(nn.LazyLinear(out_dim))
-
 
         self.layers = nn.Sequential(*layers)
 
